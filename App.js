@@ -1,14 +1,37 @@
 import { SafeAreaView, Text, View } from "react-native";
 import tailwind from "tailwind-rn";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import IntroScreen from "./IntroScreen";
+import JetScreen from "./JetScreen";
+import CityScreen from "./CityScreen";
+
+const Stack = createStackNavigator();
+
+
 
 export default function App() {
   return (
-    <SafeAreaView style={tailwind("flex-1 items-center justify-center")}>
-      <View style={tailwind("bg-blue-500 px-5 py-3 rounded-full")}>
-        <Text style={tailwind("text-white font-semibold text-lg")}>
-          Hello Tailwind 👋
-        </Text>
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+    <Stack.Navigator 
+      screenOptions={{
+        headerShown: false,
+        title: "DopeyWars"
+      }}
+    >
+      <Stack.Screen
+        name="Intro"
+        component={IntroScreen}
+      />
+      <Stack.Screen
+        name="Jet"
+        component={JetScreen}
+      />
+      <Stack.Screen
+        name="City"
+        component={CityScreen}
+      />
+    </Stack.Navigator>
+  </NavigationContainer>
   );
 }
