@@ -1,18 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button, Divider } from 'react-native-paper';
 
 class IntroScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>DopeyWars by Erin Clark</Text>
-
+        <Text style={styles.header}>DopeyWars</Text>
+        <Text>{"\n"}by Erin Clark{"\n\n"}</Text>
         <Button
-          title="Play"
           onPress={() =>
             this.props.navigation.navigate('Jet')
           }
-        />
+          mode="contained"
+          icon="gamepad-variant"
+          >
+          Play
+        </Button>
       </View>
     );
   }
@@ -24,6 +28,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header: {
+    fontSize: 20
   },
 });
 

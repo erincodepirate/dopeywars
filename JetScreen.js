@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { DataTable } from 'react-native-paper';
+import { DataTable, Divider, Menu } from 'react-native-paper';
 
 const places = ["Bronx", "Ghetto", "Central Park", "Manhattan", "Coney Island", "Brooklyn"]
 
@@ -8,30 +8,18 @@ class JetScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Where to?</Text>
-        <DataTable>
+        <Text style={styles.header}>Where to?</Text>
           {
             places.map(place => (
-              <DataTable.Row key={place} onPress={
+              <Menu.Item
+                key={place} 
+                onPress={
                 () => {
                   this.goToCity(place)}
-                }>
-              <DataTable.Cell>
-                  <Text>
-                    {place}
-                  </Text>
-              </DataTable.Cell>
-            </DataTable.Row>
+                }
+                title={place}/>
             ))
           }
-        </DataTable>
-
-        <Button
-          title="Play"
-          onPress={() =>
-            this.props.navigation.navigate('Jet')
-          }
-        />
       </View>
     );
   }
@@ -51,6 +39,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  header: {
+    fontSize: 20
+  },
+  citytext: {
+    
+    alignContent: 'center',
+    textAlign: 'center',
+    justifyContent: 'center',
+  }
 });
 
 export default JetScreen;
