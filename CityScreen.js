@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, DataTable, Dialog, Portal, Provider, Text } from 'react-native-paper';
+import { StyleSheet, View, FlatList } from 'react-native';
+import { Button, DataTable, Dialog, Portal, Provider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 const drugs = [
   {name:"Acid", price:1000}, 
@@ -28,9 +28,11 @@ function getCoatQty(drug) {
   return (d.length > 0 ? d[0].qty : 0);
 }
 
-function CityScreen({navigation}) {
-  //render() {
-    //const [buyVisible, setBuyVisible] = React.useState(false);
+function CityScreen(props) {
+    const { colors } = useTheme();
+    const { navigation } = props;
+    
+    const [buyVisible, setBuyVisible] = React.useState(false);
     const [sellVisible, setSellVisible] = React.useState(false);
 
     const sellDialog = () =>
@@ -39,48 +41,76 @@ function CityScreen({navigation}) {
     const closeSellDialog = () => 
       setSellVisible(false);
 
+    const buyDialog = () =>
+      setBuyVisible(true);
+
+    const closeBuyDialog = () => 
+      setBuyVisible(false);
+
     return (
       <Provider>
       <View style={styles.container}>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>On Hand</DataTable.Title>
-            <DataTable.Title>Drug</DataTable.Title>
-            <DataTable.Title>Price</DataTable.Title>
-          </DataTable.Header>
-          {
-            drugs.map(drug => ( 
-              <DataTable.Row key={drug.name}>
-                <DataTable.Cell>
-                  {getCoatQty(drug.name)}
-                </DataTable.Cell>
-                <DataTable.Cell>
-                  {drug.name}
-                </DataTable.Cell>
-                <DataTable.Cell>
-                  {drug.price}
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))
-          }
-        </DataTable>
-        <Button
-          onPress={sellDialog}
-          mode="contained"
-          icon="car-side"
-          >
-          Sell
-        </Button>
+        <View style={styles.table}>
+            <View style={[styles.header, colors]}>
+              <View style={[styles.cell, colors]}>
+                <Text>
+                  On Hand
+                </Text>
+              </View>
+              <View style={[styles.cell, colors]}>
+                <Text>
+                  Drug
+                </Text>
+              </View>
+              <View style={[styles.cell, colors]}>
+                <Text>
+                  Price
+                </Text>
+              </View>
+            </View>
+            <FlatList data={drugs} renderItem={({item})=>{
+              return (
+              <View style={[styles.row, colors]}>
+                <TouchableRipple style={[styles.cell, colors]} onPress={()=>{
+                  activeDrug = item.name;
+                  sellDialog();
+                }}>
+                  <Text style={styles.cellText}>{getCoatQty(item.name)}</Text>
+                </TouchableRipple>
+                <TouchableRipple style={styles.cell}>
+                  <Text style={styles.cellText}>{item.name}</Text>
+                </TouchableRipple>
+                <TouchableRipple style={styles.cell} onPress={()=>{
+                  activeDrug = item.name;
+                  buyDialog();
+                }}>
+                  <Text style={styles.cellText}>${item.price}</Text>
+                </TouchableRipple>
+              </View>)
+            }} keyExtractor={drug => drug.name} />
+
+        </View>
         <Button
           onPress={() =>
             navigation.navigate('Jet')
           }
           mode="contained"
-          icon="car-side"
-          >
-          Jet
+          icon="car-side">
+          Leave
         </Button>
+
         <Portal>
+          <Dialog 
+            visible={buyVisible} 
+            onDismiss={closeBuyDialog}>
+            <Dialog.Title>Buy {activeDrug}</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">How much {activeDrug} do you want to buy?</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={closeBuyDialog}>Done</Button>
+            </Dialog.Actions>
+          </Dialog>
           <Dialog 
             visible={sellVisible} 
             onDismiss={closeSellDialog}>
@@ -96,7 +126,6 @@ function CityScreen({navigation}) {
       </View>
       </Provider>
     );
-  //}
 }
 const styles = StyleSheet.create({
   container: {
@@ -104,7 +133,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%'
   },
+  table: {
+    flex: 1,
+    justifyContent: 'center',
+    width:'100%'
+  },
+  row: {
+    borderStyle: 'solid',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    minHeight: 48,
+    paddingHorizontal: 16,
+    flexDirection: 'row' 
+  },
+  header: {
+    flexDirection: 'row',
+    height: 48,
+    paddingHorizontal: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth * 2,
+  },
+  cell: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cellText: {
+  }
 });
 
 export default CityScreen;
