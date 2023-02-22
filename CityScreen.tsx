@@ -2,7 +2,12 @@ import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { Button, DataTable, Dialog, Portal, Provider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 
-const drugs = [
+interface Drug {
+  name: string;
+  price: number;
+} 
+
+const drugs: Drug[] = [
   {name:"Acid", price:1000}, 
   {name:"Cocaine", price: 10000},
   {name:"Ecstacy", price: 30},
@@ -23,13 +28,13 @@ const coat = [{name: "Acid", qty:10}];
 
 let activeDrug = '';
 
-function getCoatQty(drug) {
+function getCoatQty(drug: String) {
   let d = coat.filter(x => x.name === drug);
   return (d.length > 0 ? d[0].qty : 0);
 }
 
-function CityScreen(props) {
-    const { colors } = useTheme();
+function CityScreen(props: { navigation: any; }) {
+    //const { colors } = useTheme();
     const { navigation } = props;
     
     const [buyVisible, setBuyVisible] = React.useState(false);
@@ -51,18 +56,18 @@ function CityScreen(props) {
       <Provider>
       <View style={styles.container}>
         <View style={styles.table}>
-            <View style={[styles.header, colors]}>
-              <View style={[styles.cell, colors]}>
+            <View style={[styles.header, /*colors*/]}>
+              <View style={[styles.cell, /*colors*/]}>
                 <Text>
                   On Hand
                 </Text>
               </View>
-              <View style={[styles.cell, colors]}>
+              <View style={[styles.cell, /*colors*/]}>
                 <Text>
                   Drug
                 </Text>
               </View>
-              <View style={[styles.cell, colors]}>
+              <View style={[styles.cell, /*colors*/]}>
                 <Text>
                   Price
                 </Text>
@@ -70,8 +75,8 @@ function CityScreen(props) {
             </View>
             <FlatList data={drugs} renderItem={({item})=>{
               return (
-              <View style={[styles.row, colors]}>
-                <TouchableRipple style={[styles.cell, colors]} onPress={()=>{
+              <View style={[styles.row, /*colors*/]}>
+                <TouchableRipple style={[styles.cell, /*colors*/]} onPress={()=>{
                   activeDrug = item.name;
                   sellDialog();
                 }}>
@@ -87,7 +92,7 @@ function CityScreen(props) {
                   <Text style={styles.cellText}>${item.price}</Text>
                 </TouchableRipple>
               </View>)
-            }} keyExtractor={drug => drug.name} />
+            }} keyExtractor={(drug: Drug) => drug.name} />
 
         </View>
         <Button
