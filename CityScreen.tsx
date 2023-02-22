@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { Button, DataTable, Dialog, Portal, Provider, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
 
 interface Drug {
   name: string;
@@ -34,7 +34,6 @@ function getCoatQty(drug: String) {
 }
 
 function CityScreen(props: { navigation: any; }) {
-    //const { colors } = useTheme();
     const { navigation } = props;
     
     const [buyVisible, setBuyVisible] = React.useState(false);
@@ -56,18 +55,18 @@ function CityScreen(props: { navigation: any; }) {
       <Provider>
       <View style={styles.container}>
         <View style={styles.table}>
-            <View style={[styles.header, /*colors*/]}>
-              <View style={[styles.cell, /*colors*/]}>
+            <View style={styles.header}>
+              <View style={styles.cell}>
                 <Text>
                   On Hand
                 </Text>
               </View>
-              <View style={[styles.cell, /*colors*/]}>
+              <View style={styles.cell}>
                 <Text>
                   Drug
                 </Text>
               </View>
-              <View style={[styles.cell, /*colors*/]}>
+              <View style={styles.cell}>
                 <Text>
                   Price
                 </Text>
@@ -75,8 +74,8 @@ function CityScreen(props: { navigation: any; }) {
             </View>
             <FlatList data={drugs} renderItem={({item})=>{
               return (
-              <View style={[styles.row, /*colors*/]}>
-                <TouchableRipple style={[styles.cell, /*colors*/]} onPress={()=>{
+              <View style={styles.row}>
+                <TouchableRipple style={styles.cell} onPress={()=>{
                   activeDrug = item.name;
                   sellDialog();
                 }}>
@@ -132,6 +131,7 @@ function CityScreen(props: { navigation: any; }) {
       </Provider>
     );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -143,14 +143,14 @@ const styles = StyleSheet.create({
   table: {
     flex: 1,
     justifyContent: 'center',
-    width:'100%'
+    width:'100%',
   },
   row: {
     borderStyle: 'solid',
     borderBottomWidth: StyleSheet.hairlineWidth,
     minHeight: 48,
     paddingHorizontal: 16,
-    flexDirection: 'row' 
+    flexDirection: 'row',
   },
   header: {
     flexDirection: 'row',

@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { DataTable, Divider, Menu } from 'react-native-paper';
+import { StyleSheet, Text, View } from 'react-native';
+import { Menu } from 'react-native-paper';
 
 const places = ["Bronx", "Ghetto", "Central Park", "Manhattan", "Coney Island", "Brooklyn"]
 

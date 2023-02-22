@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button, Divider } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 
 function IntroScreen (props: { navigation: { navigate: (arg0: string) => void; }; }) {
   return (
