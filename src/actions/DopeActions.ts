@@ -1,5 +1,5 @@
 import { AnyAction } from "redux";
-import { DrugSale } from "./Interfaces";
+import { DrugSale } from "../Interfaces";
 
 export enum actions {
     BUY_DRUG = 'BUY_DRUG',

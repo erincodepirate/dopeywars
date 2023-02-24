@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import { Drug, Weapon } from './Enums';
-import { actions, DopeAction } from './DopeActions';
-import { DopeState, DrugMap } from './Interfaces';
+import { Drug, Weapon } from '../Enums';
+import { actions, DopeAction } from '../actions/DopeActions';
+import { DopeState, DrugMap } from '../Interfaces';
 import _ from 'lodash';
 
 // setup initial state

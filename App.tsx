@@ -3,10 +3,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as StoreProvider } from 'react-redux';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { configureStore } from '@reduxjs/toolkit';
-import IntroScreen from "./IntroScreen";
-import JetScreen from "./JetScreen";
-import CityScreen from "./CityScreen";
-import DopeReducer from './DopeReducer';
+import IntroScreen from "./src/screens/IntroScreen";
+import JetScreen from "./src/screens/JetScreen";
+import CityScreen from "./src/screens/CityScreen";
+import DopeReducer from './src/reducers/DopeReducer';
 
 const Stack = createStackNavigator();
 const Store = configureStore({

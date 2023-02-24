@@ -3,9 +3,9 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { Drug } from './Enums';
-import { RootState, DrugForSale, DrugHeld } from './Interfaces';
-import { buyDrug, DopeAction, sellDrug } from './DopeActions';
+import { Drug } from '../Enums';
+import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
+import { buyDrug, DopeAction, sellDrug } from '../actions/DopeActions';
 
 const drugs: DrugForSale[] = [
   { drug: Drug.Acid, price: 1000 },
