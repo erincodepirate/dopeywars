@@ -4,14 +4,14 @@ import { DrugMap } from '../Interfaces';
 import _ from 'lodash';
 
 export interface DopeState {
-  drugs: DrugMap,
-  cash: number,
-  bank: number,
-  loan: number,
-  health: number,
-  weapon: Weapon,
-  capacity: number,
-  days: number,
+    drugs: DrugMap,
+    cash: number,
+    bank: number,
+    loan: number,
+    health: number,
+    weapon: Weapon,
+    capacity: number,
+    days: number,
 }
 
 // setup initial state
