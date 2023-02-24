@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { Drug, Weapon } from '../Enums';
-import { actions, DopeAction } from '../actions/DopeActions';
+import { Actions, DopeAction } from '../actions/DopeActions';
 import { DopeState, DrugMap } from '../Interfaces';
 import _ from 'lodash';
 
@@ -28,7 +28,7 @@ const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
     switch (action.type) {
         default:
             return state
-        case actions.BUY_DRUG:
+        case Actions.BUY_DRUG:
             var s = _.cloneDeep(state);
             var drug = action.payload;
             if (drug) {
@@ -38,7 +38,7 @@ const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 s.drugs[drug.drug] = newAmount
             }
             return s
-        case actions.SELL_DRUG:
+        case Actions.SELL_DRUG:
             var s = _.cloneDeep(state);
             var drug = action.payload;
             if (drug) {
