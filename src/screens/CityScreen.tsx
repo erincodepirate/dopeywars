@@ -7,37 +7,6 @@ import { Drug } from '../Enums';
 import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
 import { buyDrug, DopeAction, sellDrug } from '../actions/DopeActions';
 
-// const drugs: DrugForSale[] = [
-//   { drug: Drug.Acid, price: 1000 },
-//   { drug: Drug.Cocaine, price: 10000 },
-//   { drug: Drug.Ecstacy, price: 30 },
-//   { drug: Drug.PCP, price: 1500 },
-//   { drug: Drug.Heroin, price: 5000 },
-//   { drug: Drug.Weed, price: 400 },
-//   { drug: Drug.Shrooms, price: 800 },
-//   { drug: Drug.Speed, price: 100 }]
-
-// function getDrugPrice(drug: Drug, drugs: DrugForSale[]) {
-//   let d = drugs.filter(x => x.drug === drug);
-//   return d[0].price;
-// } 
-
-// will be replaced with redux later
-// const remaining = 30;
-// const cash = 2000;
-// const debt = 3000;
-// const savings = 0;
-// const coat_capacity = 100;
-// const coat = [{ name: "Acid", qty: 10 }];
-
-
-//let activeDrug: DrugForSale = {drug:Drug.Acid, price:0}; // give it some default value so it won't be undefined
-
-// function getCoatQty(drug: String) {
-//   let d = coat.filter(x => x.name === drug);
-//   return (d.length > 0 ? d[0].qty : 0);
-// }
-
 function CityScreen(props: any) {
   const { navigation } = props;
 

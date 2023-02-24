@@ -10,6 +10,7 @@ export interface DopeState {
   loan: number,
   health: number,
   weapon: Weapon,
+  capacity: number,
 }
 
 // setup initial state
@@ -28,7 +29,8 @@ const INITIAL_STATE: DopeState = {
     bank: 0,
     loan: 5500,
     health: 100,
-    weapon: Weapon.Hands
+    weapon: Weapon.Hands,
+    capacity: 100,
 };
 
 
