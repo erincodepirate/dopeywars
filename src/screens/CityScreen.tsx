@@ -5,7 +5,7 @@ import { connect, useSelector } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { Drug } from '../Enums';
 import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
-import { buyDrug, DopeAction, sellDrug } from '../actions/DopeActions';
+import { buyDrug, decrementDay, DopeAction, sellDrug } from '../actions/DopeActions';
 
 function CityScreen(props: any) {
   const { navigation } = props;
@@ -82,14 +82,16 @@ function CityScreen(props: any) {
             Cash on Hand: {props.cash} |
             Health: {props.health} |
             Bank: {props.bank} |
-            Loan: {props.loan}
+            Loan: {props.loan} |
+            Days: {props.days}
           </Text>
         </View>
         <View style={styles.buttons}>
           <Button
-            onPress={() =>
-              navigation.navigate('Jet')
-            }
+            onPress={() => {
+              props.decrementDay();
+              navigation.navigate('Jet');
+            }}
             mode="contained"
             icon="car-side">
             Leave
@@ -178,13 +180,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state: RootState) => {
-  const { drugs, cash, bank, loan, health, weapon } = state.dopeState;
-  return { drugs, cash, bank, loan, health, weapon }
+  const { drugs, cash, bank, loan, health, weapon, days } = state.dopeState;
+  return { drugs, cash, bank, loan, health, weapon, days }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<DopeAction>) => (
   bindActionCreators({
-    buyDrug, sellDrug
+    buyDrug, sellDrug, decrementDay,
   }, dispatch)
 )
 

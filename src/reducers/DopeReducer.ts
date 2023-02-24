@@ -11,6 +11,7 @@ export interface DopeState {
   health: number,
   weapon: Weapon,
   capacity: number,
+  days: number,
 }
 
 // setup initial state
@@ -31,6 +32,7 @@ const INITIAL_STATE: DopeState = {
     health: 100,
     weapon: Weapon.Hands,
     capacity: 100,
+    days: 30
 };
 
 
@@ -47,7 +49,7 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 var newAmount = drug.amount + drugsHeld;
                 s.drugs[drug.drug] = newAmount
             }
-            return s
+            return s;
         case Actions.SELL_DRUG:
             var s = _.cloneDeep(state);
             var drug = action.payload;
@@ -57,6 +59,10 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 var newAmount = drugsHeld - drug.amount;
                 s.drugs[drug.drug] = newAmount
             }
-            return s
+            return s;
+        case Actions.DECREMENT_DAY:
+            var s = _.cloneDeep(state);
+            s.days--;
+            return s;
     }
 };

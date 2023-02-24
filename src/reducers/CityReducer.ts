@@ -61,13 +61,13 @@ export const cityReducer = (state = INITIAL_STATE, action: CityAction) => {
                 }
                 s.cities[cityEnum] = { drugsForSale: newDrugsForSale, weaponAvailable: Weapon.Hands };
             }
-            return s
+            return s;
         case Actions.LOAD_CITY:
             var s = _.cloneDeep(state);
             var city = action.payload;
             if (city) {
                 s.currentCity = city;
             }
-            return s
+            return s;
     }
 };

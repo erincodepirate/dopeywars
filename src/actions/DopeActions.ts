@@ -3,7 +3,8 @@ import { DrugSale } from "../Interfaces";
 
 export enum Actions {
     BUY_DRUG = 'BUY_DRUG',
-    SELL_DRUG = 'SELL_DRUG'
+    SELL_DRUG = 'SELL_DRUG',
+    DECREMENT_DAY = 'DECREMENT_DAY',
 }
 
 export interface DopeAction extends AnyAction {
@@ -24,4 +25,9 @@ export const sellDrug = (drugSale:DrugSale) => (
       payload: drugSale,
     }
 );
-  
+
+export const decrementDay = () => (
+  {
+    type: Actions.DECREMENT_DAY,
+  }
+);
