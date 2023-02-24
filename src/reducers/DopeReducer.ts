@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import { Drug, Weapon } from '../Enums';
 import { Actions, DopeAction } from '../actions/DopeActions';
 import { DopeState, DrugMap } from '../Interfaces';
@@ -24,7 +23,7 @@ const INITIAL_STATE: DopeState = {
 };
 
 
-const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
+export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
     switch (action.type) {
         default:
             return state
@@ -50,7 +49,3 @@ const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
             return s
     }
 };
-
-export default combineReducers({
-    dope: dopeReducer
-});

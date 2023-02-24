@@ -1,37 +1,37 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { Drug } from '../Enums';
-import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
+import { RootState, DrugForSale, DrugHeld, CitiesState } from '../Interfaces';
 import { buyDrug, DopeAction, sellDrug } from '../actions/DopeActions';
 
-const drugs: DrugForSale[] = [
-  { drug: Drug.Acid, price: 1000 },
-  { drug: Drug.Cocaine, price: 10000 },
-  { drug: Drug.Ecstacy, price: 30 },
-  { drug: Drug.PCP, price: 1500 },
-  { drug: Drug.Heroin, price: 5000 },
-  { drug: Drug.Weed, price: 400 },
-  { drug: Drug.Shrooms, price: 800 },
-  { drug: Drug.Speed, price: 100 }]
+// const drugs: DrugForSale[] = [
+//   { drug: Drug.Acid, price: 1000 },
+//   { drug: Drug.Cocaine, price: 10000 },
+//   { drug: Drug.Ecstacy, price: 30 },
+//   { drug: Drug.PCP, price: 1500 },
+//   { drug: Drug.Heroin, price: 5000 },
+//   { drug: Drug.Weed, price: 400 },
+//   { drug: Drug.Shrooms, price: 800 },
+//   { drug: Drug.Speed, price: 100 }]
 
-function getDrugPrice(drug: Drug) {
-  let d = drugs.filter(x => x.drug === drug);
-  return d[0].price;
-} 
+// function getDrugPrice(drug: Drug, drugs: DrugForSale[]) {
+//   let d = drugs.filter(x => x.drug === drug);
+//   return d[0].price;
+// } 
 
 // will be replaced with redux later
-const remaining = 30;
-const cash = 2000;
-const debt = 3000;
-const savings = 0;
-const coat_capacity = 100;
-const coat = [{ name: "Acid", qty: 10 }];
+// const remaining = 30;
+// const cash = 2000;
+// const debt = 3000;
+// const savings = 0;
+// const coat_capacity = 100;
+// const coat = [{ name: "Acid", qty: 10 }];
 
 
-let activeDrug: Drug;
+//let activeDrug: DrugForSale = {drug:Drug.Acid, price:0}; // give it some default value so it won't be undefined
 
 // function getCoatQty(drug: String) {
 //   let d = coat.filter(x => x.name === drug);
@@ -41,10 +41,15 @@ let activeDrug: Drug;
 function CityScreen(props: any) {
   const { navigation } = props;
 
+  const citiesState = useSelector((state: RootState) => state.citiesState);
+  const cityState = citiesState.cities[citiesState.currentCity];
+  const drugs: DrugForSale[] = cityState.drugsForSale;
+
   const [buyVisible, setBuyVisible] = React.useState(false);
   const [sellVisible, setSellVisible] = React.useState(false);
   const [amountToBuy, setAmountToBuy] = React.useState(0);
   const [amountToSell, setAmountToSell] = React.useState(0);
+  const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
 
   const sellDialog = () =>
     setSellVisible(true);
@@ -83,18 +88,18 @@ function CityScreen(props: any) {
             return (
               <View style={styles.row}>
                 <TouchableRipple style={styles.cell} onPress={() => {
-                  activeDrug = item.drug;
+                  setActiveDrug(item);
                   sellDialog();
                 }}>
                   <Text style={styles.cellText}>{
-                  props.drugs ? props.drugs[item.drug] : 0
+                    props.drugs ? props.drugs[item.drug] : 0
                   }</Text>
                 </TouchableRipple>
                 <TouchableRipple style={styles.cell}>
                   <Text style={styles.cellText}>{item.drug}</Text>
                 </TouchableRipple>
                 <TouchableRipple style={styles.cell} onPress={() => {
-                  activeDrug = item.drug;
+                  setActiveDrug(item);
                   buyDialog();
                 }}>
                   <Text style={styles.cellText}>${item.price}</Text>
@@ -106,20 +111,20 @@ function CityScreen(props: any) {
         <View style={styles.status}>
           <Text>
             Cash on Hand: {props.cash} |
-            Health: {props.health} | 
+            Health: {props.health} |
             Bank: {props.bank} |
             Loan: {props.loan}
           </Text>
         </View>
         <View style={styles.buttons}>
-        <Button
-          onPress={() =>
-            navigation.navigate('Jet')
-          }
-          mode="contained"
-          icon="car-side">
-          Leave
-        </Button>
+          <Button
+            onPress={() =>
+              navigation.navigate('Jet')
+            }
+            mode="contained"
+            icon="car-side">
+            Leave
+          </Button>
         </View>
 
 
@@ -127,14 +132,14 @@ function CityScreen(props: any) {
           <Dialog
             visible={buyVisible}
             onDismiss={closeBuyDialog}>
-            <Dialog.Title>Buy {activeDrug}</Dialog.Title>
+            <Dialog.Title>Buy {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">How much {activeDrug} do you want to buy?</Text>
-              <TextInput onChangeText={(value)=>setAmountToBuy(Number(value))}/>
+              <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
+              <TextInput onChangeText={(value) => setAmountToBuy(Number(value))} />
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={()=>{
-                props.buyDrug({drug: activeDrug, price: getDrugPrice(activeDrug), amount:amountToBuy});
+              <Button onPress={() => {
+                props.buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy });
                 closeBuyDialog();
               }}>Buy</Button>
               <Button onPress={closeBuyDialog}>Cancel</Button>
@@ -143,14 +148,14 @@ function CityScreen(props: any) {
           <Dialog
             visible={sellVisible}
             onDismiss={closeSellDialog}>
-            <Dialog.Title>Sell {activeDrug}</Dialog.Title>
+            <Dialog.Title>Sell {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">How much {activeDrug} do you want to sell?</Text>
-              <TextInput onChangeText={(value)=>setAmountToSell(Number(value))}/>
+              <Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell?</Text>
+              <TextInput onChangeText={(value) => setAmountToSell(Number(value))} />
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={()=>{
-                props.sellDrug({drug: activeDrug, price: getDrugPrice(activeDrug), amount:amountToSell});
+              <Button onPress={() => {
+                props.sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToSell });
                 closeSellDialog();
               }}>Sell</Button>
               <Button onPress={closeSellDialog}>Cancel</Button>
@@ -196,15 +201,15 @@ const styles = StyleSheet.create({
   cellText: {
   },
   buttons: {
-    flexDirection : 'row'
+    flexDirection: 'row'
   },
   status: {
-    flexDirection : 'row'
+    flexDirection: 'row'
   }
 });
 
 const mapStateToProps = (state: RootState) => {
-  const { drugs, cash, bank, loan, health, weapon } = state.dope;
+  const { drugs, cash, bank, loan, health, weapon } = state.dopeState;
   return { drugs, cash, bank, loan, health, weapon }
 }
 
@@ -214,4 +219,4 @@ const mapDispatchToProps = (dispatch: Dispatch<DopeAction>) => (
   }, dispatch)
 )
 
-export default connect(mapStateToProps,mapDispatchToProps)(CityScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(CityScreen);

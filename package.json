@@ -13,6 +13,7 @@
     "react-native-web": "~0.18.7",
     "react-redux": "^8.0.5",
     "redux": "^4.2.1",
+    "rooks": "^7.4.3",
     "tailwind-rn": "^3.0.1"
   },
   "devDependencies": {
