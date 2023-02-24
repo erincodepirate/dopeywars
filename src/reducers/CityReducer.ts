@@ -1,7 +1,21 @@
 import { City, Drug, Weapon } from '../Enums';
 import { Actions, CityAction } from '../actions/CityActions';
-import { CitiesState, CityState, DrugMap, DrugForSale } from '../Interfaces';
+import { DrugMap, DrugForSale } from '../Interfaces';
 import _ from 'lodash';
+
+export type CityStateMap = {
+    [id in City]: CityState
+}
+
+export interface CityState {
+    drugsForSale: DrugForSale[],
+    weaponAvailable: Weapon,
+}
+
+export interface CitiesState {
+    cities: CityStateMap,
+    currentCity: City
+}
 
 const defaultDrugPrices: DrugMap = {
     Acid: 1000,

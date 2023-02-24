@@ -1,4 +1,6 @@
 import { City, Drug, Weapon } from './Enums';
+import { CitiesState } from './reducers/CityReducer';
+import { DopeState } from './reducers/DopeReducer';
 
 export interface DrugForSale {
   drug: Drug;
@@ -20,30 +22,7 @@ export type DrugMap = {
   [id in Drug]: number;
 };
 
-export interface DopeState {
-  drugs: DrugMap,
-  cash: number,
-  bank: number,
-  loan: number,
-  health: number,
-  weapon: Weapon,
-}
-
-export type CityStateMap = {
-  [id in City]: CityState
-}
-
-export interface CityState {
-  drugsForSale: DrugForSale[],
-  weaponAvailable: Weapon,
-}
-
-export interface CitiesState {
-  cities: CityStateMap,
-  currentCity: City
-}
-
 export interface RootState {
-  dopeState: DopeState
-  citiesState: CitiesState
+  dopeState: DopeState;
+  citiesState: CitiesState;
 }

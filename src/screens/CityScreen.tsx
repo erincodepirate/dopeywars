@@ -4,7 +4,7 @@ import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } fr
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { Drug } from '../Enums';
-import { RootState, DrugForSale, DrugHeld, CitiesState } from '../Interfaces';
+import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
 import { buyDrug, DopeAction, sellDrug } from '../actions/DopeActions';
 
 // const drugs: DrugForSale[] = [

@@ -1,7 +1,16 @@
 import { Drug, Weapon } from '../Enums';
 import { Actions, DopeAction } from '../actions/DopeActions';
-import { DopeState, DrugMap } from '../Interfaces';
+import { DrugMap } from '../Interfaces';
 import _ from 'lodash';
+
+export interface DopeState {
+  drugs: DrugMap,
+  cash: number,
+  bank: number,
+  loan: number,
+  health: number,
+  weapon: Weapon,
+}
 
 // setup initial state
 const INITIAL_STATE: DopeState = {
