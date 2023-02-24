@@ -1,21 +1,26 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
+import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { Drug } from './Enums';
+import { RootState, DrugForSale, DrugHeld } from './Interfaces';
+import { buyDrug, DopeAction, sellDrug } from './DopeActions';
 
-interface Drug {
-  name: string;
-  price: number;
+const drugs: DrugForSale[] = [
+  { drug: Drug.Acid, price: 1000 },
+  { drug: Drug.Cocaine, price: 10000 },
+  { drug: Drug.Ecstacy, price: 30 },
+  { drug: Drug.PCP, price: 1500 },
+  { drug: Drug.Heroin, price: 5000 },
+  { drug: Drug.Weed, price: 400 },
+  { drug: Drug.Shrooms, price: 800 },
+  { drug: Drug.Speed, price: 100 }]
+
+function getDrugPrice(drug: Drug) {
+  let d = drugs.filter(x => x.drug === drug);
+  return d[0].price;
 } 
-
-const drugs: Drug[] = [
-  {name:"Acid", price:1000}, 
-  {name:"Cocaine", price: 10000},
-  {name:"Ecstacy", price: 30},
-  {name:"PCP", price: 1500},
-  {name:"Heroin", price: 5000},
-  {name:"Weed", price: 400},
-  {name:"Shrooms", price: 800},
-  {name:"Speed", price: 100}]
 
 // will be replaced with redux later
 const remaining = 30;
@@ -23,77 +28,90 @@ const cash = 2000;
 const debt = 3000;
 const savings = 0;
 const coat_capacity = 100;
-const coat = [{name: "Acid", qty:10}];
+const coat = [{ name: "Acid", qty: 10 }];
 
 
-let activeDrug = '';
+let activeDrug: Drug;
 
-function getCoatQty(drug: String) {
-  let d = coat.filter(x => x.name === drug);
-  return (d.length > 0 ? d[0].qty : 0);
-}
+// function getCoatQty(drug: String) {
+//   let d = coat.filter(x => x.name === drug);
+//   return (d.length > 0 ? d[0].qty : 0);
+// }
 
-function CityScreen(props: { navigation: any; }) {
-    const { navigation } = props;
-    
-    const [buyVisible, setBuyVisible] = React.useState(false);
-    const [sellVisible, setSellVisible] = React.useState(false);
+function CityScreen(props: any) {
+  const { navigation } = props;
 
-    const sellDialog = () =>
-      setSellVisible(true);
+  const [buyVisible, setBuyVisible] = React.useState(false);
+  const [sellVisible, setSellVisible] = React.useState(false);
+  const [amountToBuy, setAmountToBuy] = React.useState(0);
+  const [amountToSell, setAmountToSell] = React.useState(0);
 
-    const closeSellDialog = () => 
-      setSellVisible(false);
+  const sellDialog = () =>
+    setSellVisible(true);
 
-    const buyDialog = () =>
-      setBuyVisible(true);
+  const closeSellDialog = () =>
+    setSellVisible(false);
 
-    const closeBuyDialog = () => 
-      setBuyVisible(false);
+  const buyDialog = () =>
+    setBuyVisible(true);
 
-    return (
-      <Provider>
+  const closeBuyDialog = () =>
+    setBuyVisible(false);
+
+  return (
+    <Provider>
       <View style={styles.container}>
         <View style={styles.table}>
-            <View style={styles.header}>
-              <View style={styles.cell}>
-                <Text>
-                  On Hand
-                </Text>
-              </View>
-              <View style={styles.cell}>
-                <Text>
-                  Drug
-                </Text>
-              </View>
-              <View style={styles.cell}>
-                <Text>
-                  Price
-                </Text>
-              </View>
+          <View style={styles.header}>
+            <View style={styles.cell}>
+              <Text>
+                On Hand
+              </Text>
             </View>
-            <FlatList data={drugs} renderItem={({item})=>{
-              return (
+            <View style={styles.cell}>
+              <Text>
+                Drug
+              </Text>
+            </View>
+            <View style={styles.cell}>
+              <Text>
+                Price
+              </Text>
+            </View>
+          </View>
+          <FlatList data={drugs} renderItem={({ item }) => {
+            return (
               <View style={styles.row}>
-                <TouchableRipple style={styles.cell} onPress={()=>{
-                  activeDrug = item.name;
+                <TouchableRipple style={styles.cell} onPress={() => {
+                  activeDrug = item.drug;
                   sellDialog();
                 }}>
-                  <Text style={styles.cellText}>{getCoatQty(item.name)}</Text>
+                  <Text style={styles.cellText}>{
+                  props.drugs ? props.drugs[item.drug] : 0
+                  }</Text>
                 </TouchableRipple>
                 <TouchableRipple style={styles.cell}>
-                  <Text style={styles.cellText}>{item.name}</Text>
+                  <Text style={styles.cellText}>{item.drug}</Text>
                 </TouchableRipple>
-                <TouchableRipple style={styles.cell} onPress={()=>{
-                  activeDrug = item.name;
+                <TouchableRipple style={styles.cell} onPress={() => {
+                  activeDrug = item.drug;
                   buyDialog();
                 }}>
                   <Text style={styles.cellText}>${item.price}</Text>
                 </TouchableRipple>
               </View>)
-            }} keyExtractor={(drug: Drug) => drug.name} />
+          }} keyExtractor={(drug: DrugForSale) => drug.drug} />
 
         </View>
+        <View style={styles.status}>
+          <Text>
+            Cash on Hand: {props.cash} |
+            Health: {props.health} | 
+            Bank: {props.bank} |
+            Loan: {props.loan}
+          </Text>
+        </View>
+        <View style={styles.buttons}>
         <Button
           onPress={() =>
             navigation.navigate('Jet')
@@ -102,34 +120,46 @@ function CityScreen(props: { navigation: any; }) {
           icon="car-side">
           Leave
         </Button>
+        </View>
+
 
         <Portal>
-          <Dialog 
-            visible={buyVisible} 
+          <Dialog
+            visible={buyVisible}
             onDismiss={closeBuyDialog}>
             <Dialog.Title>Buy {activeDrug}</Dialog.Title>
             <Dialog.Content>
               <Text variant="bodyMedium">How much {activeDrug} do you want to buy?</Text>
+              <TextInput onChangeText={(value)=>setAmountToBuy(Number(value))}/>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={closeBuyDialog}>Done</Button>
+              <Button onPress={()=>{
+                props.buyDrug({drug: activeDrug, price: getDrugPrice(activeDrug), amount:amountToBuy});
+                closeBuyDialog();
+              }}>Buy</Button>
+              <Button onPress={closeBuyDialog}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
-          <Dialog 
-            visible={sellVisible} 
+          <Dialog
+            visible={sellVisible}
             onDismiss={closeSellDialog}>
             <Dialog.Title>Sell {activeDrug}</Dialog.Title>
             <Dialog.Content>
               <Text variant="bodyMedium">How much {activeDrug} do you want to sell?</Text>
+              <TextInput onChangeText={(value)=>setAmountToSell(Number(value))}/>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={closeSellDialog}>Done</Button>
+              <Button onPress={()=>{
+                props.sellDrug({drug: activeDrug, price: getDrugPrice(activeDrug), amount:amountToSell});
+                closeSellDialog();
+              }}>Sell</Button>
+              <Button onPress={closeSellDialog}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
       </View>
-      </Provider>
-    );
+    </Provider>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -143,7 +173,7 @@ const styles = StyleSheet.create({
   table: {
     flex: 1,
     justifyContent: 'center',
-    width:'100%',
+    width: '100%',
   },
   row: {
     borderStyle: 'solid',
@@ -164,7 +194,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cellText: {
+  },
+  buttons: {
+    flexDirection : 'row'
+  },
+  status: {
+    flexDirection : 'row'
   }
 });
 
-export default CityScreen;
+const mapStateToProps = (state: RootState) => {
+  const { drugs, cash, bank, loan, health, weapon } = state.dope;
+  return { drugs, cash, bank, loan, health, weapon }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<DopeAction>) => (
+  bindActionCreators({
+    buyDrug, sellDrug
+  }, dispatch)
+)
+
+export default connect(mapStateToProps,mapDispatchToProps)(CityScreen);
