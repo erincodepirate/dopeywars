@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 function IntroScreen(props: any) {
@@ -8,6 +8,11 @@ function IntroScreen(props: any) {
     <View style={styles.container}>
       <Text style={styles.header}>DopeyWars</Text>
       <Text>{"\n"}by Erin Clark{"\n\n"}</Text>
+        <Image
+          style={styles.raccoon}
+          source={require("../../images/raccdealer.png")}
+        />
+      <Text>{"\n\n"}</Text>
       <Button
         onPress={() => {
           props.navigation.navigate('Jet');
@@ -30,8 +35,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    fontSize: 20
+    fontSize: 32 
   },
+  raccoon: {
+    height: 128,
+    width: 128,
+  }
 });
 
 export default IntroScreen;
