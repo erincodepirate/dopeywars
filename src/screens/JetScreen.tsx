@@ -1,14 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Menu } from 'react-native-paper';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
-import { CityAction, loadCity } from '../actions/CityActions';
+import { useDispatch } from 'react-redux';
+import { loadCity } from '../actions/CityActions';
 import { City } from '../Enums';
 
 function JetScreen(props: any) {
+  const dispatch = useDispatch();
+  
   function goToCity(place: City) {
-    props.loadCity(place)
+    dispatch(loadCity(place));
     props.navigation.navigate('City');
   }
 
@@ -49,10 +50,4 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<CityAction>) => (
-  bindActionCreators({
-    loadCity
-  }, dispatch)
-)
-
-export default connect(null, mapDispatchToProps)(JetScreen);
+export default JetScreen;

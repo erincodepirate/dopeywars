@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 const Store = configureStore({
   reducer: combineReducers({
     dopeState: dopeReducer,
-    citiesState: cityReducer
+    cityState: cityReducer
   }),
 })
 

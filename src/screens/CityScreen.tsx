@@ -1,18 +1,18 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
-import { connect, useSelector } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Drug } from '../Enums';
 import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
-import { buyDrug, decrementDay, DopeAction, sellDrug } from '../actions/DopeActions';
+import { buyDrug, decrementDay, sellDrug } from '../actions/DopeActions';
 
 function CityScreen(props: any) {
   const { navigation } = props;
 
-  const citiesState = useSelector((state: RootState) => state.citiesState);
-  const cityState = citiesState.cities[citiesState.currentCity];
+  const { cityState, dopeState } = useSelector((state: RootState) => state);
   const drugs: DrugForSale[] = cityState.drugsForSale;
+
+  const dispatch = useDispatch();
 
   const [buyVisible, setBuyVisible] = React.useState(false);
   const [sellVisible, setSellVisible] = React.useState(false);
@@ -61,7 +61,7 @@ function CityScreen(props: any) {
                   sellDialog();
                 }}>
                   <Text style={styles.cellText}>{
-                    props.drugs ? props.drugs[item.drug] : 0
+                    dopeState.drugs ? dopeState.drugs[item.drug] : 0
                   }</Text>
                 </TouchableRipple>
                 <TouchableRipple style={styles.cell}>
@@ -79,17 +79,17 @@ function CityScreen(props: any) {
         </View>
         <View style={styles.status}>
           <Text>
-            Cash on Hand: {props.cash} |
-            Health: {props.health} |
-            Bank: {props.bank} |
-            Loan: {props.loan} |
-            Days: {props.days}
+            Cash on Hand: {dopeState.cash} |
+            Health: {dopeState.health} |
+            Bank: {dopeState.bank} |
+            Loan: {dopeState.loan} |
+            Days: {dopeState.days}
           </Text>
         </View>
         <View style={styles.buttons}>
           <Button
             onPress={() => {
-              props.decrementDay();
+              dispatch(decrementDay());
               navigation.navigate('Jet');
             }}
             mode="contained"
@@ -110,7 +110,7 @@ function CityScreen(props: any) {
             </Dialog.Content>
             <Dialog.Actions>
               <Button onPress={() => {
-                props.buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy });
+                dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy }));
                 closeBuyDialog();
               }}>Buy</Button>
               <Button onPress={closeBuyDialog}>Cancel</Button>
@@ -126,7 +126,7 @@ function CityScreen(props: any) {
             </Dialog.Content>
             <Dialog.Actions>
               <Button onPress={() => {
-                props.sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToSell });
+                dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToSell }));
                 closeSellDialog();
               }}>Sell</Button>
               <Button onPress={closeSellDialog}>Cancel</Button>
@@ -179,15 +179,4 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state: RootState) => {
-  const { drugs, cash, bank, loan, health, weapon, days } = state.dopeState;
-  return { drugs, cash, bank, loan, health, weapon, days }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<DopeAction>) => (
-  bindActionCreators({
-    buyDrug, sellDrug, decrementDay,
-  }, dispatch)
-)
-
-export default connect(mapStateToProps, mapDispatchToProps)(CityScreen);
+export default CityScreen;

@@ -1,9 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
-import { CityAction, firstLoad } from '../actions/CityActions';
 
 function IntroScreen(props: any) {
   console.log(props);
@@ -13,7 +10,6 @@ function IntroScreen(props: any) {
       <Text>{"\n"}by Erin Clark{"\n\n"}</Text>
       <Button
         onPress={() => {
-          props.firstLoad();
           props.navigation.navigate('Jet');
         }
         }
@@ -38,10 +34,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<CityAction>) => (
-  bindActionCreators({
-    firstLoad
-  }, dispatch)
-)
-
-export default connect(null, mapDispatchToProps)(IntroScreen);
+export default IntroScreen;
