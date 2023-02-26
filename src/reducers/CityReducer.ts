@@ -47,6 +47,17 @@ export const cityReducer = (state = INITIAL_STATE, action: CityAction) => {
                 price = price + Math.floor(price * Math.random());
                 newDrugsForSale.push({ drug: drugEnum, price: price})
             }
+            // randomly remove up to 3 drugs
+            let randomRemove = Math.floor(Math.random() * 4);
+            let randomIndexes = new Set();
+            for (let i = 0; i < randomRemove; i++) {
+                let randomIndex = Math.floor(Math.random() * newDrugsForSale.length);
+                while (randomIndexes.has(randomIndex)) {
+                    randomIndex = Math.floor(Math.random() * newDrugsForSale.length);
+                }
+                randomIndexes.add(randomIndex);
+                newDrugsForSale[randomIndex].price = 0;
+            }
             s.drugsForSale = newDrugsForSale
             s.hasVisited = false;
             return s;

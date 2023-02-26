@@ -3,7 +3,7 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { Drug } from '../Enums';
-import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
+import { RootState, DrugForSale } from '../Interfaces';
 import { buyDrug, decrementDay, sellDrug } from '../actions/DopeActions';
 import { visit } from '../actions/CityActions';
 
@@ -77,7 +77,7 @@ function CityScreen(props: any) {
                   setActiveDrug(item);
                   buyDialog();
                 }}>
-                  <Text style={styles.cellText}>${item.price}</Text>
+                  <Text style={styles.cellText}>{item.price ? ("$" + item.price) : "None"}</Text>
                 </TouchableRipple>
               </View>)
           }} keyExtractor={(drug: DrugForSale) => drug.drug} />
@@ -110,15 +110,23 @@ function CityScreen(props: any) {
             onDismiss={closeBuyDialog}>
             <Dialog.Title>Buy {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
-              <TextInput onChangeText={(value) => setAmountToBuy(Number(value))} />
+              {activeDrug.price != 0 ?
+                (<View>
+                  <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
+                  <TextInput onChangeText={(value) => setAmountToBuy(Number(value))} />
+                </View>)
+                : 
+                (<Text variant="bodyMedium">No one is selling {activeDrug.drug} here.</Text>)
+              }
             </Dialog.Content>
             <Dialog.Actions>
+              {activeDrug.price != 0 &&
               <Button onPress={() => {
                 dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy }));
                 closeBuyDialog();
               }}>Buy</Button>
-              <Button onPress={closeBuyDialog}>Cancel</Button>
+              }
+              <Button onPress={closeBuyDialog}>{activeDrug.price != 0 ? "Cancel" : "Close"}</Button>
             </Dialog.Actions>
           </Dialog>
           <Dialog
@@ -126,14 +134,18 @@ function CityScreen(props: any) {
             onDismiss={closeSellDialog}>
             <Dialog.Title>Sell {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell?</Text>
+              {activeDrug.price != 0 ?
+                  (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell?</Text>)
+                  :
+                  (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
+              }
               <TextInput onChangeText={(value) => setAmountToSell(Number(value))} />
             </Dialog.Content>
             <Dialog.Actions>
               <Button onPress={() => {
                 dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToSell }));
                 closeSellDialog();
-              }}>Sell</Button>
+              }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
               <Button onPress={closeSellDialog}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
