@@ -12,12 +12,12 @@ export interface CityState {
 
 const defaultDrugPrices: DrugMap = {
     Acid: 1000,
-    Cocaine: 10000,
-    Ecstacy: 30,
-    PCP: 1500,
+    Cocaine: 12000,
+    Ecstacy: 20,
+    PCP: 1000,
     Heroin: 5000,
-    Weed: 400,
-    Shrooms: 800,
+    Weed: 200,
+    Shrooms: 500,
     Speed: 100
 }
 
@@ -42,7 +42,10 @@ export const cityReducer = (state = INITIAL_STATE, action: CityAction) => {
             }
             const newDrugsForSale: DrugForSale[] = []
             for (const [drugString, drugEnum] of Object.entries(Drug)) {
-                newDrugsForSale.push({ drug: drugEnum, price: defaultDrugPrices[drugEnum] })
+                // randomize the price a little
+                let price = defaultDrugPrices[drugEnum];
+                price = price + Math.floor(price * Math.random());
+                newDrugsForSale.push({ drug: drugEnum, price: price})
             }
             s.drugsForSale = newDrugsForSale
             s.hasVisited = false;
