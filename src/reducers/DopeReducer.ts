@@ -32,7 +32,7 @@ const INITIAL_STATE: DopeState = {
     health: 100,
     weapon: Weapon.Hands,
     capacity: 100,
-    days: 30
+    days: 31
 };
 
 

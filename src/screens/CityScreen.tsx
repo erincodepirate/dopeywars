@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Drug } from '../Enums';
 import { RootState, DrugForSale, DrugHeld } from '../Interfaces';
 import { buyDrug, decrementDay, sellDrug } from '../actions/DopeActions';
+import { visit } from '../actions/CityActions';
 
 function CityScreen(props: any) {
   const { navigation } = props;
@@ -13,6 +14,11 @@ function CityScreen(props: any) {
   const drugs: DrugForSale[] = cityState.drugsForSale;
 
   const dispatch = useDispatch();
+
+  if (!cityState.hasVisited) {
+    dispatch(decrementDay());
+    dispatch(visit());
+  }
 
   const [buyVisible, setBuyVisible] = React.useState(false);
   const [sellVisible, setSellVisible] = React.useState(false);
@@ -89,7 +95,6 @@ function CityScreen(props: any) {
         <View style={styles.buttons}>
           <Button
             onPress={() => {
-              dispatch(decrementDay());
               navigation.navigate('Jet');
             }}
             mode="contained"

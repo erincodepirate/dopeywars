@@ -6,7 +6,8 @@ import _ from 'lodash';
 export interface CityState {
     drugsForSale: DrugForSale[],
     weaponAvailable: Weapon,
-    currentCity: City,
+    currentCity: City | null,
+    hasVisited: boolean,
 }
 
 const defaultDrugPrices: DrugMap = {
@@ -24,7 +25,8 @@ const INITIAL_STATE: CityState =
 {
     drugsForSale: [],
     weaponAvailable: Weapon.Hands,
-    currentCity: City.Bronx
+    currentCity: null,
+    hasVisited: false,
 };
 
 
@@ -43,6 +45,11 @@ export const cityReducer = (state = INITIAL_STATE, action: CityAction) => {
                 newDrugsForSale.push({ drug: drugEnum, price: defaultDrugPrices[drugEnum] })
             }
             s.drugsForSale = newDrugsForSale
+            s.hasVisited = false;
+            return s;
+        case Actions.VISIT:
+            var s = _.cloneDeep(state);
+            s.hasVisited = true;
             return s;
     }
 };
