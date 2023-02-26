@@ -5,7 +5,6 @@ import { DrugSale } from "../Interfaces";
 export enum Actions {
   BUY_DRUG = 'BUY_DRUG',
   SELL_DRUG = 'SELL_DRUG',
-  DUMP_DRUG = 'DUMP_DRUG',
   DECREMENT_DAY = 'DECREMENT_DAY',
 }
 
