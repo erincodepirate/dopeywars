@@ -19,7 +19,7 @@ const INITIAL_STATE: DopeState = {
     drugs: {
         Acid: 0,
         Cocaine: 0,
-        Ecstacy: 0,
+        Ecstasy: 0,
         PCP: 0,
         Heroin: 0,
         Weed: 0,
