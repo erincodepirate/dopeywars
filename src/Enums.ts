@@ -1,7 +1,7 @@
 export enum Drug {
   Acid = "Acid",
   Cocaine = "Cocaine",
-  Ecstacy = "Ecstacy",
+  Ecstasy = "Ecstasy",
   PCP = "PCP",
   Heroin = "Heroin",
   Weed = "Weed",

@@ -13,7 +13,7 @@ export interface CityState {
 const defaultDrugPrices: DrugMap = {
     Acid: 1000,
     Cocaine: 12000,
-    Ecstacy: 20,
+    Ecstasy: 20,
     PCP: 1000,
     Heroin: 5000,
     Weed: 200,
