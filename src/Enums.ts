@@ -24,3 +24,10 @@ export enum City {
   Coney_Island = "Coney Island",
   Brooklyn = "Brooklyn"
 }
+
+export enum EventTypes {
+  drugExpensive = "drugExpensive",
+  drugCheaper = "drugCheaper",
+  drugBust = "drugBust",
+  drugFree = "drugFree"
+}

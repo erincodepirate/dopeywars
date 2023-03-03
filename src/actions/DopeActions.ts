@@ -1,11 +1,12 @@
 import { AnyAction } from "redux";
 import { Drug } from "../Enums";
-import { DrugSale } from "../Interfaces";
+import { DrugSale, DrugForSale } from "../Interfaces";
 
 export enum Actions {
   BUY_DRUG = 'BUY_DRUG',
   SELL_DRUG = 'SELL_DRUG',
   DECREMENT_DAY = 'DECREMENT_DAY',
+  FREE_DRUG = 'FREE_DRUG'
 }
 
 export interface DopeAction extends AnyAction {
@@ -26,6 +27,14 @@ export const sellDrug = (drugSale: DrugSale) => (
     payload: drugSale,
   }
 );
+
+export const freeDrug = (drug: DrugForSale) => (
+  {
+    type: Actions.FREE_DRUG,
+    payload: drug,
+  }
+);
+
 
 export const decrementDay = () => (
   {

@@ -35,6 +35,15 @@ const INITIAL_STATE: DopeState = {
     days: 31
 };
 
+function totalInBag(state: DopeState) {
+    let total = 0;
+    for (const [drugString, drugEnum] of Object.entries(Drug)) {
+        const held = state.drugs[drugEnum];
+        total += held;
+    }
+    return total;
+}
+
 
 export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
     switch (action.type) {
@@ -57,6 +66,20 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 s.cash += drug.amount * drug.price;
                 var drugsHeld = s.drugs[drug.drug];
                 var newAmount = drugsHeld - drug.amount;
+                s.drugs[drug.drug] = newAmount
+            }
+            return s;
+        case Actions.FREE_DRUG:
+            var s = _.cloneDeep(state);
+            var drug = action.payload;
+            let numDrugs = 2 + Math.floor(Math.random() * 4); // 2-5 drugs found
+            if (drug) {
+                var drugsHeld = s.drugs[drug.drug];
+                // find a number of drugs that you can hold without going over capacity
+                while (numDrugs + totalInBag(s) > s.capacity) {
+                    numDrugs -= 1;
+                }
+                var newAmount = drugsHeld + numDrugs;
                 s.drugs[drug.drug] = newAmount
             }
             return s;

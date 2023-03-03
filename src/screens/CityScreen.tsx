@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { Drug } from '../Enums';
+import { Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
-import { buyDrug, decrementDay, sellDrug } from '../actions/DopeActions';
+import { buyDrug, decrementDay, freeDrug, sellDrug } from '../actions/DopeActions';
 import { visit } from '../actions/CityActions';
 
 function CityScreen(props: any) {
@@ -15,11 +15,9 @@ function CityScreen(props: any) {
 
   const dispatch = useDispatch();
 
-  if (!cityState.hasVisited) {
-    dispatch(decrementDay());
-    dispatch(visit());
-  }
-
+  const [eventVisible, setEventVisible] = React.useState(false);
+  const [eventMessage, setEventMessage] = React.useState("");
+  const [eventIndex, setEventIndex] = React.useState(0);
   const [buyVisible, setBuyVisible] = React.useState(false);
   const [sellVisible, setSellVisible] = React.useState(false);
   const [amountToBuy, setAmountToBuy] = React.useState(0);
@@ -37,6 +35,37 @@ function CityScreen(props: any) {
 
   const closeBuyDialog = () =>
     setBuyVisible(false);
+
+  const eventDialog = () =>
+    setEventVisible(true);
+
+  const handleNextEvent = () => {
+    if (eventIndex < cityState.events.length) {
+      if (cityState.events[eventIndex].event == EventTypes.drugFree) {
+        dispatch(freeDrug(cityState.events[eventIndex].drug))
+      }
+      setEventMessage(cityState.events[eventIndex].message);
+      setEventVisible(true);
+      setEventIndex(eventIndex + 1);
+    }
+  }
+
+  const closeEventDialog = () => {
+    // handle the events on dialog close
+    setEventVisible(false);
+    handleNextEvent()
+  }
+
+  useEffect(() => {
+    if (!cityState.hasVisited) {
+      dispatch(decrementDay());
+      dispatch(visit());
+      if (eventIndex < cityState.events.length) {
+        handleNextEvent();
+      }
+    }
+  });
+
 
   return (
     <Provider>
@@ -115,16 +144,16 @@ function CityScreen(props: any) {
                   <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
                   <TextInput onChangeText={(value) => setAmountToBuy(Number(value))} />
                 </View>)
-                : 
+                :
                 (<Text variant="bodyMedium">No one is selling {activeDrug.drug} here.</Text>)
               }
             </Dialog.Content>
             <Dialog.Actions>
               {activeDrug.price != 0 &&
-              <Button onPress={() => {
-                dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy }));
-                closeBuyDialog();
-              }}>Buy</Button>
+                <Button onPress={() => {
+                  dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy }));
+                  closeBuyDialog();
+                }}>Buy</Button>
               }
               <Button onPress={closeBuyDialog}>{activeDrug.price != 0 ? "Cancel" : "Close"}</Button>
             </Dialog.Actions>
@@ -135,9 +164,9 @@ function CityScreen(props: any) {
             <Dialog.Title>Sell {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
               {activeDrug.price != 0 ?
-                  (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell?</Text>)
-                  :
-                  (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
+                (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell?</Text>)
+                :
+                (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
               }
               <TextInput onChangeText={(value) => setAmountToSell(Number(value))} />
             </Dialog.Content>
@@ -147,6 +176,16 @@ function CityScreen(props: any) {
                 closeSellDialog();
               }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
               <Button onPress={closeSellDialog}>Cancel</Button>
+            </Dialog.Actions>
+          </Dialog>
+          <Dialog
+            visible={eventVisible}
+            onDismiss={closeEventDialog}>
+            <Dialog.Content>
+              <Text variant="bodyMedium">{eventMessage}</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={closeEventDialog}>Ok</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
