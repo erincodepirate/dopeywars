@@ -21,7 +21,9 @@ function CityScreen(props: any) {
   const [eventMessage, setEventMessage] = React.useState("");
   const [eventIndex, setEventIndex] = React.useState(0);
   const [buyVisible, setBuyVisible] = React.useState(false);
+  const [buyError, setBuyError] = React.useState(false);
   const [sellVisible, setSellVisible] = React.useState(false);
+  const [sellError, setSellError] = React.useState(false);
   const [amountToBuy, setAmountToBuy] = React.useState('');
   const [amountToSell, setAmountToSell] = React.useState('');
   const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
@@ -29,8 +31,7 @@ function CityScreen(props: any) {
   const sellDialog = () =>
     setSellVisible(true);
 
-  const closeSellDialog = () =>
-  {
+  const closeSellDialog = () => {
     setAmountToSell('');
     setSellVisible(false);
   }
@@ -152,10 +153,17 @@ function CityScreen(props: any) {
                     value={amountToBuy}
                     onChangeText={(value) => {
                       if (value == '' || numre.test(value)) {
-                        setAmountToBuy(value)
+                        let val = Number(value);
+                        if (activeDrug.price * val > dopeState.cash || val + dopeState.capacityUsed > dopeState.capacity) {
+                          setBuyError(true);
+                        } else {
+                          setBuyError(false);
+                        }
+                        setAmountToBuy(value);
                       }
-                    }
-                    } />
+                    }}
+                    error={buyError} />
+                    {buyError && <Text style={styles.error}>You cannot afford that much {activeDrug.drug}</Text>}
                 </View>)
                 :
                 (<Text variant="bodyMedium">No one is selling {activeDrug.drug} here.</Text>)
@@ -164,7 +172,7 @@ function CityScreen(props: any) {
             <Dialog.Actions>
               {activeDrug.price != 0 &&
                 <Button
-                  disabled={amountToBuy == ''}
+                  disabled={amountToBuy == '' || Number(amountToBuy) == 0 || buyError}
                   onPress={() => {
                     dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToBuy) }));
                     closeBuyDialog();
@@ -179,7 +187,10 @@ function CityScreen(props: any) {
             <Dialog.Title>Sell {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
               {activeDrug.price != 0 ?
-                (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell?</Text>)
+                dopeState.drugs[activeDrug.drug] > 0 ?
+                  (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell? You can sell up to {dopeState.drugs[activeDrug.drug]}</Text>)
+                  :
+                  (<Text variant="bodyMedium">You do not have any {activeDrug.drug}.</Text>)
                 :
                 (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
               }
@@ -187,18 +198,29 @@ function CityScreen(props: any) {
                 value={amountToSell}
                 onChangeText={(value) => {
                   if (value == '' || numre.test(value)) {
+                    setSellError(false);
+                    let val = Number(value);
+                    if (val > dopeState.drugs[activeDrug.drug]) {
+                      setSellError(true);
+                    }
+                    setAmountToSell(val.toString())
+                  } else {
+                    setSellError(true);
                     setAmountToSell(value)
                   }
-                }
-                } />
+                }}
+                error={sellError} />
+                {sellError && <Text style={styles.error}>You do not have that much {activeDrug.drug}</Text>}
             </Dialog.Content>
             <Dialog.Actions>
-              <Button
-                disabled={amountToSell == ''}
-                onPress={() => {
-                  dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToSell) }));
-                  closeSellDialog();
-                }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
+              {dopeState.drugs[activeDrug.drug] > 0 &&
+                <Button
+                  disabled={amountToSell == '' || amountToSell != '0' || sellError}
+                  onPress={() => {
+                    dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToSell) }));
+                    closeSellDialog();
+                  }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
+              }
               <Button onPress={closeSellDialog}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
@@ -256,6 +278,9 @@ const styles = StyleSheet.create({
   },
   status: {
     flexDirection: 'row'
+  },
+  error: {
+    color: 'darkred'
   }
 });
 

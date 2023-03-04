@@ -10,6 +10,7 @@ export interface DopeState {
     loan: number,
     health: number,
     weapon: Weapon,
+    capacityUsed: number,
     capacity: number,
     days: number,
 }
@@ -31,6 +32,7 @@ const INITIAL_STATE: DopeState = {
     loan: 5500,
     health: 100,
     weapon: Weapon.Hands,
+    capacityUsed: 0,
     capacity: 100,
     days: 31
 };
@@ -57,6 +59,7 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 var drugsHeld = s.drugs[drug.drug];
                 var newAmount = drug.amount + drugsHeld;
                 s.drugs[drug.drug] = newAmount
+                s.capacityUsed = totalInBag(s);
             }
             return s;
         case Actions.SELL_DRUG:
@@ -67,6 +70,7 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 var drugsHeld = s.drugs[drug.drug];
                 var newAmount = drugsHeld - drug.amount;
                 s.drugs[drug.drug] = newAmount
+                s.capacityUsed = totalInBag(s);
             }
             return s;
         case Actions.FREE_DRUG:
@@ -81,6 +85,7 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 }
                 var newAmount = drugsHeld + numDrugs;
                 s.drugs[drug.drug] = newAmount
+                s.capacityUsed = totalInBag(s);
             }
             return s;
         case Actions.DECREMENT_DAY:
