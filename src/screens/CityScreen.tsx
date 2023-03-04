@@ -51,7 +51,6 @@ function CityScreen(props: any) {
   }
 
   const closeEventDialog = () => {
-    // handle the events on dialog close
     setEventVisible(false);
     handleNextEvent()
   }
@@ -64,7 +63,7 @@ function CityScreen(props: any) {
         handleNextEvent();
       }
     }
-  });
+  }, []);
 
 
   return (
