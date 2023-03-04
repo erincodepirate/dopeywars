@@ -15,26 +15,33 @@ function CityScreen(props: any) {
 
   const dispatch = useDispatch();
 
+  const numre = /^[0-9\b]+$/;
+
   const [eventVisible, setEventVisible] = React.useState(false);
   const [eventMessage, setEventMessage] = React.useState("");
   const [eventIndex, setEventIndex] = React.useState(0);
   const [buyVisible, setBuyVisible] = React.useState(false);
   const [sellVisible, setSellVisible] = React.useState(false);
-  const [amountToBuy, setAmountToBuy] = React.useState(0);
-  const [amountToSell, setAmountToSell] = React.useState(0);
+  const [amountToBuy, setAmountToBuy] = React.useState('');
+  const [amountToSell, setAmountToSell] = React.useState('');
   const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
 
   const sellDialog = () =>
     setSellVisible(true);
 
   const closeSellDialog = () =>
+  {
+    setAmountToSell('');
     setSellVisible(false);
+  }
 
   const buyDialog = () =>
     setBuyVisible(true);
 
-  const closeBuyDialog = () =>
+  const closeBuyDialog = () => {
+    setAmountToBuy('');
     setBuyVisible(false);
+  }
 
   const eventDialog = () =>
     setEventVisible(true);
@@ -141,7 +148,14 @@ function CityScreen(props: any) {
               {activeDrug.price != 0 ?
                 (<View>
                   <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
-                  <TextInput onChangeText={(value) => setAmountToBuy(Number(value))} />
+                  <TextInput
+                    value={amountToBuy}
+                    onChangeText={(value) => {
+                      if (value == '' || numre.test(value)) {
+                        setAmountToBuy(value)
+                      }
+                    }
+                    } />
                 </View>)
                 :
                 (<Text variant="bodyMedium">No one is selling {activeDrug.drug} here.</Text>)
@@ -149,10 +163,12 @@ function CityScreen(props: any) {
             </Dialog.Content>
             <Dialog.Actions>
               {activeDrug.price != 0 &&
-                <Button onPress={() => {
-                  dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToBuy }));
-                  closeBuyDialog();
-                }}>Buy</Button>
+                <Button
+                  disabled={amountToBuy == ''}
+                  onPress={() => {
+                    dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToBuy) }));
+                    closeBuyDialog();
+                  }}>Buy</Button>
               }
               <Button onPress={closeBuyDialog}>{activeDrug.price != 0 ? "Cancel" : "Close"}</Button>
             </Dialog.Actions>
@@ -167,13 +183,22 @@ function CityScreen(props: any) {
                 :
                 (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
               }
-              <TextInput onChangeText={(value) => setAmountToSell(Number(value))} />
+              <TextInput
+                value={amountToSell}
+                onChangeText={(value) => {
+                  if (value == '' || numre.test(value)) {
+                    setAmountToSell(value)
+                  }
+                }
+                } />
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={() => {
-                dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: amountToSell }));
-                closeSellDialog();
-              }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
+              <Button
+                disabled={amountToSell == ''}
+                onPress={() => {
+                  dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToSell) }));
+                  closeSellDialog();
+                }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
               <Button onPress={closeSellDialog}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
