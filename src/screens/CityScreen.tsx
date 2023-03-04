@@ -198,16 +198,14 @@ function CityScreen(props: any) {
                 value={amountToSell}
                 onChangeText={(value) => {
                   if (value == '' || numre.test(value)) {
-                    setSellError(false);
                     let val = Number(value);
                     if (val > dopeState.drugs[activeDrug.drug]) {
                       setSellError(true);
+                    } else { 
+                      setSellError(false);
                     }
-                    setAmountToSell(val.toString())
-                  } else {
-                    setSellError(true);
-                    setAmountToSell(value)
                   }
+                  setAmountToSell(value)
                 }}
                 error={sellError} />
                 {sellError && <Text style={styles.error}>You do not have that much {activeDrug.drug}</Text>}
@@ -215,7 +213,7 @@ function CityScreen(props: any) {
             <Dialog.Actions>
               {dopeState.drugs[activeDrug.drug] > 0 &&
                 <Button
-                  disabled={amountToSell == '' || amountToSell != '0' || sellError}
+                  disabled={amountToSell == '' || Number(amountToSell) == 0 || sellError}
                   onPress={() => {
                     dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToSell) }));
                     closeSellDialog();
