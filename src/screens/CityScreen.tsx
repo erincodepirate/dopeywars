@@ -163,7 +163,7 @@ function CityScreen(props: any) {
                       }
                     }}
                     error={buyError} />
-                    {buyError && <Text style={styles.error}>You cannot afford that much {activeDrug.drug}</Text>}
+                  {buyError && <Text style={styles.error}>You cannot afford that much {activeDrug.drug}</Text>}
                 </View>)
                 :
                 (<Text variant="bodyMedium">No one is selling {activeDrug.drug} here.</Text>)
@@ -201,14 +201,14 @@ function CityScreen(props: any) {
                     let val = Number(value);
                     if (val > dopeState.drugs[activeDrug.drug]) {
                       setSellError(true);
-                    } else { 
+                    } else {
                       setSellError(false);
                     }
                   }
                   setAmountToSell(value)
                 }}
                 error={sellError} />
-                {sellError && <Text style={styles.error}>You do not have that much {activeDrug.drug}</Text>}
+              {sellError && <Text style={styles.error}>You do not have that much {activeDrug.drug}</Text>}
             </Dialog.Content>
             <Dialog.Actions>
               {dopeState.drugs[activeDrug.drug] > 0 &&
