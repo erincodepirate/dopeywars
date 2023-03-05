@@ -48,77 +48,77 @@ function totalInBag(state: DopeState) {
 }
 
 export const dopeReducer = createReducer(
-    INITIAL_STATE, 
+    INITIAL_STATE,
     (builder) => {
         builder
-        .addCase(buyDrug, (state, action) => {
-            var s = _.cloneDeep(state);
-            var drug = action.payload;
-            if (drug) {
-                s.cash -= drug.amount * drug.price;
-                var drugsHeld = s.drugs[drug.drug];
-                var newAmount = drug.amount + drugsHeld;
-                s.drugs[drug.drug] = newAmount
-                s.capacityUsed = totalInBag(s);
-            }
-            return s;
-        })
-        .addCase(sellDrug, (state, action) => {
-            var s = _.cloneDeep(state);
-            var drug = action.payload;
-            if (drug) {
-                s.cash += drug.amount * drug.price;
-                var drugsHeld = s.drugs[drug.drug];
-                var newAmount = drugsHeld - drug.amount;
-                s.drugs[drug.drug] = newAmount
-                s.capacityUsed = totalInBag(s);
-            }
-            return s;
-        })
-        .addCase(freeDrug, (state, action) => {
-            var s = _.cloneDeep(state);
-            var drug = action.payload;
-            let numDrugs = 2 + Math.floor(Math.random() * 4); // 2-5 drugs found
-            if (drug) {
-                var drugsHeld = s.drugs[drug.drug];
-                // find a number of drugs that you can hold without going over capacity
-                while (numDrugs + totalInBag(s) > s.capacity) {
-                    numDrugs -= 1;
+            .addCase(buyDrug, (state, action) => {
+                var s = _.cloneDeep(state);
+                var drug = action.payload;
+                if (drug) {
+                    s.cash -= drug.amount * drug.price;
+                    var drugsHeld = s.drugs[drug.drug];
+                    var newAmount = drug.amount + drugsHeld;
+                    s.drugs[drug.drug] = newAmount
+                    s.capacityUsed = totalInBag(s);
                 }
-                var newAmount = drugsHeld + numDrugs;
-                s.drugs[drug.drug] = newAmount
-                s.capacityUsed = totalInBag(s);
-            }
-            return s;
-        })
-        .addCase(decrementDay, (state, action) => {
-            var s = _.cloneDeep(state);
-            s.days--;
-            return s;
-        })
-        .addCase(payLoan, (state, action) => {
-            var s = _.cloneDeep(state);
-            s.loan -= action.payload;
-            s.cash -= action.payload;
-            return s;
-        })
-        .addCase(borrowMoney, (state, action) => {
-            var s = _.cloneDeep(state);
-            s.loan += action.payload;
-            s.cash += action.payload;
-            return s;
-        })
-        .addCase(depositMoney, (state, action) => {
-            var s = _.cloneDeep(state);
-            s.bank += action.payload;
-            s.cash -= action.payload;
-            return s;
-        })
-        .addCase(withDrawMoney, (state, action) => {
-            var s = _.cloneDeep(state);
-            s.bank -= action.payload;
-            s.cash += action.payload;
-            return s;
-        })
+                return s;
+            })
+            .addCase(sellDrug, (state, action) => {
+                var s = _.cloneDeep(state);
+                var drug = action.payload;
+                if (drug) {
+                    s.cash += drug.amount * drug.price;
+                    var drugsHeld = s.drugs[drug.drug];
+                    var newAmount = drugsHeld - drug.amount;
+                    s.drugs[drug.drug] = newAmount
+                    s.capacityUsed = totalInBag(s);
+                }
+                return s;
+            })
+            .addCase(freeDrug, (state, action) => {
+                var s = _.cloneDeep(state);
+                var drug = action.payload;
+                let numDrugs = 2 + Math.floor(Math.random() * 4); // 2-5 drugs found
+                if (drug) {
+                    var drugsHeld = s.drugs[drug.drug];
+                    // find a number of drugs that you can hold without going over capacity
+                    while (numDrugs + totalInBag(s) > s.capacity) {
+                        numDrugs -= 1;
+                    }
+                    var newAmount = drugsHeld + numDrugs;
+                    s.drugs[drug.drug] = newAmount
+                    s.capacityUsed = totalInBag(s);
+                }
+                return s;
+            })
+            .addCase(decrementDay, (state, action) => {
+                var s = _.cloneDeep(state);
+                s.days--;
+                return s;
+            })
+            .addCase(payLoan, (state, action) => {
+                var s = _.cloneDeep(state);
+                s.loan -= action.payload;
+                s.cash -= action.payload;
+                return s;
+            })
+            .addCase(borrowMoney, (state, action) => {
+                var s = _.cloneDeep(state);
+                s.loan += action.payload;
+                s.cash += action.payload;
+                return s;
+            })
+            .addCase(depositMoney, (state, action) => {
+                var s = _.cloneDeep(state);
+                s.bank += action.payload;
+                s.cash -= action.payload;
+                return s;
+            })
+            .addCase(withDrawMoney, (state, action) => {
+                var s = _.cloneDeep(state);
+                s.bank -= action.payload;
+                s.cash += action.payload;
+                return s;
+            })
     }
 );
