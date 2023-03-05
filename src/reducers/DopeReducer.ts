@@ -1,5 +1,6 @@
 import { Drug, Weapon } from '../Enums';
-import { Actions, DopeAction } from '../actions/DopeActions';
+import { borrowMoney, buyDrug, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, withDrawMoney } from '../actions/DopeActions';
+import { createReducer } from '@reduxjs/toolkit'
 import { DrugMap } from '../Interfaces';
 import _ from 'lodash';
 
@@ -46,12 +47,11 @@ function totalInBag(state: DopeState) {
     return total;
 }
 
-
-export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
-    switch (action.type) {
-        default:
-            return state
-        case Actions.BUY_DRUG:
+export const dopeReducer = createReducer(
+    INITIAL_STATE, 
+    (builder) => {
+        builder
+        .addCase(buyDrug, (state, action) => {
             var s = _.cloneDeep(state);
             var drug = action.payload;
             if (drug) {
@@ -62,7 +62,8 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 s.capacityUsed = totalInBag(s);
             }
             return s;
-        case Actions.SELL_DRUG:
+        })
+        .addCase(sellDrug, (state, action) => {
             var s = _.cloneDeep(state);
             var drug = action.payload;
             if (drug) {
@@ -73,7 +74,8 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 s.capacityUsed = totalInBag(s);
             }
             return s;
-        case Actions.FREE_DRUG:
+        })
+        .addCase(freeDrug, (state, action) => {
             var s = _.cloneDeep(state);
             var drug = action.payload;
             let numDrugs = 2 + Math.floor(Math.random() * 4); // 2-5 drugs found
@@ -88,9 +90,35 @@ export const dopeReducer = (state = INITIAL_STATE, action: DopeAction) => {
                 s.capacityUsed = totalInBag(s);
             }
             return s;
-        case Actions.DECREMENT_DAY:
+        })
+        .addCase(decrementDay, (state, action) => {
             var s = _.cloneDeep(state);
             s.days--;
             return s;
+        })
+        .addCase(payLoan, (state, action) => {
+            var s = _.cloneDeep(state);
+            s.loan -= action.payload;
+            s.cash -= action.payload;
+            return s;
+        })
+        .addCase(borrowMoney, (state, action) => {
+            var s = _.cloneDeep(state);
+            s.loan += action.payload;
+            s.cash += action.payload;
+            return s;
+        })
+        .addCase(depositMoney, (state, action) => {
+            var s = _.cloneDeep(state);
+            s.bank += action.payload;
+            s.cash -= action.payload;
+            return s;
+        })
+        .addCase(withDrawMoney, (state, action) => {
+            var s = _.cloneDeep(state);
+            s.bank -= action.payload;
+            s.cash += action.payload;
+            return s;
+        })
     }
-};
+);

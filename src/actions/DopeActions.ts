@@ -1,43 +1,11 @@
-import { AnyAction } from "redux";
-import { Drug } from "../Enums";
+import { createAction } from "@reduxjs/toolkit";
 import { DrugSale, DrugForSale } from "../Interfaces";
 
-export enum Actions {
-  BUY_DRUG = 'BUY_DRUG',
-  SELL_DRUG = 'SELL_DRUG',
-  DECREMENT_DAY = 'DECREMENT_DAY',
-  FREE_DRUG = 'FREE_DRUG'
-}
-
-export interface DopeAction extends AnyAction {
-  type: Actions,
-  payload?: DrugSale
-}
-
-export const buyDrug = (drugSale: DrugSale) => (
-  {
-    type: Actions.BUY_DRUG,
-    payload: drugSale,
-  }
-);
-
-export const sellDrug = (drugSale: DrugSale) => (
-  {
-    type: Actions.SELL_DRUG,
-    payload: drugSale,
-  }
-);
-
-export const freeDrug = (drug: DrugForSale) => (
-  {
-    type: Actions.FREE_DRUG,
-    payload: drug,
-  }
-);
-
-
-export const decrementDay = () => (
-  {
-    type: Actions.DECREMENT_DAY,
-  }
-);
+export const buyDrug = createAction<DrugSale>('BUY_DRUG');
+export const sellDrug = createAction<DrugSale>('SELL_DRUG');
+export const decrementDay = createAction('DECREMENT_DAY');
+export const freeDrug = createAction<DrugForSale>('FREE_DRUG');
+export const payLoan = createAction<number>('PAY_LOAN');
+export const borrowMoney = createAction<number>('BORROW_MONEY');
+export const depositMoney = createAction<number>('DEPOSIT_MONEY');
+export const withDrawMoney = createAction<number>('WITHDRAW_MONEY');
