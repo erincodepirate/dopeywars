@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   cellText: {
   },
   location: {
-    minWidth: 300
+    width: '100%'
   },
   error: {
     color: 'darkred'
