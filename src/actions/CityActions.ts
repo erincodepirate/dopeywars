@@ -1,25 +1,5 @@
-import { AnyAction } from "redux";
 import { City } from "../Enums";
+import { createAction } from "@reduxjs/toolkit";
 
-export enum Actions {
-  LOAD_CITY = 'LOAD_CITY',
-  VISIT = 'VISIT'
-}
-
-export interface CityAction extends AnyAction {
-  type: Actions,
-  payload?: City
-}
-
-export const loadCity = (city: City) => (
-  {
-    type: Actions.LOAD_CITY,
-    payload: city,
-  }
-);
-
-export const visit = () => (
-  {
-    type: Actions.VISIT,
-  }
-);
+export const loadCity = createAction<City>('LOAD_CITY');
+export const visit = createAction('VISIT');
