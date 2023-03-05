@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple } from 'react-native-paper';
+import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
@@ -76,6 +76,7 @@ function CityScreen(props: any) {
   return (
     <Provider>
       <View style={styles.container}>
+        <View style={styles.location}>
         <View style={styles.table}>
           <View style={styles.header}>
             <View style={styles.cell}>
@@ -118,24 +119,25 @@ function CityScreen(props: any) {
           }} keyExtractor={(drug: DrugForSale) => drug.drug} />
 
         </View>
-        <View style={styles.status}>
-          <Text>
-            Cash on Hand: {dopeState.cash} |
-            Health: {dopeState.health} |
-            Bank: {dopeState.bank} |
-            Loan: {dopeState.loan} |
-            Days: {dopeState.days}
-          </Text>
-        </View>
-        <View style={styles.buttons}>
-          <Button
-            onPress={() => {
-              navigation.navigate('Jet');
-            }}
-            mode="contained"
-            icon="car-side">
-            Leave
-          </Button>
+        <Card>
+          <Card.Content>
+            <Text>Cash on Hand: {dopeState.cash}</Text>
+            <Text>Health: {dopeState.health}</Text>
+            <Text>Cash in Bank: {dopeState.bank}</Text>
+            <Text>Loan owed: {dopeState.loan}</Text>
+            <Text>Days remaining: {dopeState.days}</Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button
+              onPress={() => {
+                navigation.navigate('Jet');
+              }}
+              mode="contained"
+              icon="car-side">
+              Leave
+            </Button>
+          </Card.Actions>
+        </Card>
         </View>
 
 
@@ -277,11 +279,8 @@ const styles = StyleSheet.create({
   },
   cellText: {
   },
-  buttons: {
-    flexDirection: 'row'
-  },
-  status: {
-    flexDirection: 'row'
+  location: {
+    minWidth: 300
   },
   error: {
     color: 'darkred'
