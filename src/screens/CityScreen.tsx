@@ -147,30 +147,33 @@ function CityScreen(props: any) {
             <Dialog.Title>Buy {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
               {activeDrug.price != 0 ?
-                (<View>
-                  <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
-                  <TextInput
-                    value={amountToBuy}
-                    onChangeText={(value) => {
-                      if (value == '' || numre.test(value)) {
-                        let val = Number(value);
-                        if (activeDrug.price * val > dopeState.cash || val + dopeState.capacityUsed > dopeState.capacity) {
-                          setBuyError(true);
-                        } else {
-                          setBuyError(false);
+                (activeDrug.price < dopeState.cash ?
+                  (<View>
+                    <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
+                    <TextInput
+                      value={amountToBuy}
+                      onChangeText={(value) => {
+                        if (value == '' || numre.test(value)) {
+                          let val = Number(value);
+                          if (activeDrug.price * val > dopeState.cash || val + dopeState.capacityUsed > dopeState.capacity) {
+                            setBuyError(true);
+                          } else {
+                            setBuyError(false);
+                          }
+                          setAmountToBuy(value);
                         }
-                        setAmountToBuy(value);
-                      }
-                    }}
-                    error={buyError} />
-                  {buyError && <Text style={styles.error}>You cannot afford that much {activeDrug.drug}</Text>}
-                </View>)
+                      }}
+                      error={buyError} />
+                    {buyError && <Text style={styles.error}>You cannot afford that much {activeDrug.drug}</Text>}
+                  </View>)
+                  : (<Text variant="bodyMedium">You cannot afford any {activeDrug.drug}.</Text>)
+                )
                 :
                 (<Text variant="bodyMedium">No one is selling {activeDrug.drug} here.</Text>)
               }
             </Dialog.Content>
             <Dialog.Actions>
-              {activeDrug.price != 0 &&
+              {(activeDrug.price != 0 && activeDrug.price < dopeState.cash) &&
                 <Button
                   disabled={amountToBuy == '' || Number(amountToBuy) == 0 || buyError}
                   onPress={() => {
@@ -178,7 +181,9 @@ function CityScreen(props: any) {
                     closeBuyDialog();
                   }}>Buy</Button>
               }
-              <Button onPress={closeBuyDialog}>{activeDrug.price != 0 ? "Cancel" : "Close"}</Button>
+              <Button onPress={closeBuyDialog}>
+                {(activeDrug.price != 0 && activeDrug.price < dopeState.cash) ? "Cancel" : "Close"}
+              </Button>
             </Dialog.Actions>
           </Dialog>
           <Dialog
@@ -186,15 +191,15 @@ function CityScreen(props: any) {
             onDismiss={closeSellDialog}>
             <Dialog.Title>Sell {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
-              {activeDrug.price != 0 ?
-                dopeState.drugs[activeDrug.drug] > 0 ?
+              {dopeState.drugs[activeDrug.drug] > 0
+                ? activeDrug.price != 0 ?
                   (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell? You can sell up to {dopeState.drugs[activeDrug.drug]}</Text>)
                   :
-                  (<Text variant="bodyMedium">You do not have any {activeDrug.drug}.</Text>)
+                  (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
                 :
-                (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
+                (<Text variant="bodyMedium">You do not have any {activeDrug.drug}.</Text>)
               }
-              <TextInput
+              {dopeState.drugs[activeDrug.drug] > 0 && <TextInput
                 value={amountToSell}
                 onChangeText={(value) => {
                   if (value == '' || numre.test(value)) {
@@ -207,7 +212,7 @@ function CityScreen(props: any) {
                   }
                   setAmountToSell(value)
                 }}
-                error={sellError} />
+                error={sellError} />}
               {sellError && <Text style={styles.error}>You do not have that much {activeDrug.drug}</Text>}
             </Dialog.Content>
             <Dialog.Actions>
@@ -219,7 +224,9 @@ function CityScreen(props: any) {
                     closeSellDialog();
                   }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
               }
-              <Button onPress={closeSellDialog}>Cancel</Button>
+              <Button onPress={closeSellDialog}>
+                {dopeState.drugs[activeDrug.drug] > 0 ? "Cancel" : "Close"}
+              </Button>
             </Dialog.Actions>
           </Dialog>
           <Dialog
