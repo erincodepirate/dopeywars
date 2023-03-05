@@ -77,67 +77,67 @@ function CityScreen(props: any) {
     <Provider>
       <View style={styles.container}>
         <View style={styles.location}>
-        <View style={styles.table}>
-          <View style={styles.header}>
-            <View style={styles.cell}>
-              <Text>
-                On Hand
-              </Text>
+          <View style={styles.table}>
+            <View style={styles.header}>
+              <View style={styles.cell}>
+                <Text>
+                  On Hand
+                </Text>
+              </View>
+              <View style={styles.cell}>
+                <Text>
+                  Drug
+                </Text>
+              </View>
+              <View style={styles.cell}>
+                <Text>
+                  Price
+                </Text>
+              </View>
             </View>
-            <View style={styles.cell}>
-              <Text>
-                Drug
-              </Text>
-            </View>
-            <View style={styles.cell}>
-              <Text>
-                Price
-              </Text>
-            </View>
-          </View>
-          <FlatList data={drugs} renderItem={({ item }) => {
-            return (
-              <View style={styles.row}>
-                <TouchableRipple style={styles.cell} onPress={() => {
-                  setActiveDrug(item);
-                  sellDialog();
-                }}>
-                  <Text style={styles.cellText}>{
-                    dopeState.drugs ? dopeState.drugs[item.drug] : 0
-                  }</Text>
-                </TouchableRipple>
-                <TouchableRipple style={styles.cell}>
-                  <Text style={styles.cellText}>{item.drug}</Text>
-                </TouchableRipple>
-                <TouchableRipple style={styles.cell} onPress={() => {
-                  setActiveDrug(item);
-                  buyDialog();
-                }}>
-                  <Text style={styles.cellText}>{item.price ? ("$" + item.price) : "None"}</Text>
-                </TouchableRipple>
-              </View>)
-          }} keyExtractor={(drug: DrugForSale) => drug.drug} />
+            <FlatList data={drugs} renderItem={({ item }) => {
+              return (
+                <View style={styles.row}>
+                  <TouchableRipple style={styles.cell} onPress={() => {
+                    setActiveDrug(item);
+                    sellDialog();
+                  }}>
+                    <Text style={styles.cellText}>{
+                      dopeState.drugs ? dopeState.drugs[item.drug] : 0
+                    }</Text>
+                  </TouchableRipple>
+                  <TouchableRipple style={styles.cell}>
+                    <Text style={styles.cellText}>{item.drug}</Text>
+                  </TouchableRipple>
+                  <TouchableRipple style={styles.cell} onPress={() => {
+                    setActiveDrug(item);
+                    buyDialog();
+                  }}>
+                    <Text style={styles.cellText}>{item.price ? ("$" + item.price) : "None"}</Text>
+                  </TouchableRipple>
+                </View>)
+            }} keyExtractor={(drug: DrugForSale) => drug.drug} />
 
-        </View>
-        <Card>
-          <Card.Content>
-            <Text>Cash on Hand: {dopeState.cash}</Text>
-            <Text>Health: {dopeState.health}</Text>
-            <Text>Cash in Bank: {dopeState.bank}</Text>
-            <Text>Loan owed: {dopeState.loan}</Text>
-            <Text>Days remaining: {dopeState.days}</Text>
-          </Card.Content>
-          <Card.Actions>
-            <Button
-              onPress={() => {
-                navigation.navigate('Jet');
-              }}
-              mode="contained"
-              icon="car-side">
-              Leave
-            </Button>
-          </Card.Actions>
-        </Card>
+          </View>
+          <Card>
+            <Card.Content>
+              <Text>Cash on Hand: {dopeState.cash}</Text>
+              <Text>Health: {dopeState.health}</Text>
+              <Text>Cash in Bank: {dopeState.bank}</Text>
+              <Text>Loan owed: {dopeState.loan}</Text>
+              <Text>Days remaining: {dopeState.days}</Text>
+            </Card.Content>
+            <Card.Actions>
+              <Button
+                onPress={() => {
+                  navigation.navigate('Jet');
+                }}
+                mode="contained"
+                icon="car-side">
+                Leave
+              </Button>
+            </Card.Actions>
+          </Card>
         </View>
 
 
