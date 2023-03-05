@@ -35,7 +35,7 @@ const INITIAL_STATE: CityState =
 const eventMethods = {
     cheaper: (drug: DrugForSale): LocationEvent => { // drug has become cheaper
         let divisor = 7 + Math.floor(Math.random() * 4);
-        Math.floor(drug.price /= divisor);
+        drug.price = Math.floor(drug.price / divisor);
         let message = "The market has been flooded with " + drug.drug + "!"
         return { drug: drug, message: message, event:EventTypes.drugCheaper }
     },
