@@ -1,5 +1,6 @@
 import { City, Drug, Weapon, EventTypes } from '../Enums';
-import { loadCity, visit } from '../actions/CityActions';
+import { drugBust, drugCheaper, drugExpensive, loadCity, visit } from '../actions/CityActions';
+import { freeDrug } from '../actions/DopeActions';
 import { DrugMap, DrugForSale, LocationEvent } from '../Interfaces';
 import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
@@ -35,26 +36,23 @@ const INITIAL_STATE: CityState =
 
 const eventMethods = {
     cheaper: (drug: DrugForSale): LocationEvent => { // drug has become cheaper
-        let divisor = 7 + Math.floor(Math.random() * 4);
-        drug.price = Math.floor(drug.price / divisor);
-        let message = "The market has been flooded with " + drug.drug + "!"
-        return { drug: drug, message: message, event: EventTypes.drugCheaper }
+        let message = "The market has been flooded with " + drug.drug + "!";
+        if (drug.drug == Drug.Weed) {
+            message = "Smugglers got past border patrol. " + drug.drug + " is super cheap.";
+        }
+        return { drug: drug, message: message, eventAction: drugCheaper }
     },
     bust: (drug: DrugForSale): LocationEvent => { // cops did a bust, drug becomes more expensive
-        let multiplier = 3 + Math.floor(Math.random() * 3);
-        drug.price *= multiplier;
-        let message = "The cops just did a " + drug.drug + " bust! Prices went way up!"
-        return { drug: drug, message: message, event: EventTypes.drugBust }
+        let message = "The cops just did a " + drug.drug + " bust! Prices went way up!";
+        return { drug: drug, message: message, eventAction: drugBust };
     },
     expensive: (drug: DrugForSale): LocationEvent => { // addicts are buying drug at a higher price
-        let multiplier = 2 + Math.floor(Math.random() * 2);
-        drug.price *= multiplier;
-        let message = "Addicts are buying " + drug.drug + " at a high price! Prices went way up!"
-        return { drug: drug, message: message, event: EventTypes.drugExpensive }
+        let message = "Addicts are buying " + drug.drug + " at a high price! Prices went way up!";
+        return { drug: drug, message: message, eventAction: drugExpensive };
     },
     free: (drug: DrugForSale): LocationEvent => { // found some free of this drug
-        let message = "You found some " + drug.drug + " on a dead person in the subway!"
-        return { drug: drug, message: message, event: EventTypes.drugFree }
+        let message = "You found some " + drug.drug + " on a dead person in the subway!";
+        return { drug: drug, message: message, eventAction: freeDrug };
     }
 }
 
@@ -77,13 +75,22 @@ const events = [
     { freq: 8, func: eventMethods.free, drug: Drug.PCP }
 ]
 
+function raiseDrugPrice(price: number, adjustment: number) {
+    let multiplier = adjustment + Math.floor(Math.random() * adjustment);
+    return price * multiplier;
+}
+
+function findDrug(drug: Drug, state: CityState) {
+    return _.findIndex(state.drugsForSale, { drug: drug });
+}
+
 export const cityReducer = createReducer(
     INITIAL_STATE,
     (builder) => {
         builder
             .addCase(loadCity, (state, action) => {
-                var s = _.cloneDeep(state);
-                var city = action.payload;
+                let s = _.cloneDeep(state);
+                let city = action.payload;
                 if (city) {
                     s.currentCity = city;
                 }
@@ -113,9 +120,11 @@ export const cityReducer = createReducer(
                     let eventRandom = Math.floor(Math.random() * 100);
                     if (eventRandom <= event.freq) {
                         let i = _.findIndex(newDrugsForSale, { drug: event.drug });
-                        let e = event.func(newDrugsForSale[i]);
-                        newDrugsForSale[i] = e.drug;
-                        newEvents.push(e);
+                        if (newDrugsForSale[i].price != 0 || event.func == eventMethods.free) {
+                            let e = event.func(newDrugsForSale[i]);
+                            newDrugsForSale[i] = e.drug;
+                            newEvents.push(e);
+                        }
                     }
                 }
 
@@ -125,8 +134,31 @@ export const cityReducer = createReducer(
                 return s;
             })
             .addCase(visit, (state, action) => {
-                var s = _.cloneDeep(state);
+                let s = _.cloneDeep(state);
                 s.hasVisited = true;
+                return s;
+            })
+            .addCase(drugBust, (state, action) => {
+                let s = _.cloneDeep(state);
+                let drug = action.payload;
+                let i = findDrug(drug.drug, s);
+                s.drugsForSale[i].price = raiseDrugPrice(drug.price, 3);
+                return s;
+            })
+            .addCase(drugCheaper, (state, action) => {
+                let s = _.cloneDeep(state);
+                let drug = action.payload;
+                let i = findDrug(drug.drug, s);
+                let price = s.drugsForSale[i].price;
+                let divisor = 7 + Math.floor(Math.random() * 4);
+                s.drugsForSale[i].price = Math.floor(price / divisor);
+                return s;
+            })
+            .addCase(drugExpensive, (state, action) => {
+                let s = _.cloneDeep(state);
+                let drug = action.payload;
+                let i = findDrug(drug.drug, s);
+                s.drugsForSale[i].price = raiseDrugPrice(drug.price, 2);
                 return s;
             })
     }

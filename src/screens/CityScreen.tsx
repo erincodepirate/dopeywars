@@ -49,10 +49,9 @@ function CityScreen(props: any) {
 
   const handleNextEvent = () => {
     if (eventIndex < cityState.events.length) {
-      if (cityState.events[eventIndex].event == EventTypes.drugFree) {
-        dispatch(freeDrug(cityState.events[eventIndex].drug))
-      }
-      setEventMessage(cityState.events[eventIndex].message);
+      let event = cityState.events[eventIndex];
+      dispatch(event.eventAction(event.drug));
+      setEventMessage(event.message);
       setEventVisible(true);
       setEventIndex(eventIndex + 1);
     }
