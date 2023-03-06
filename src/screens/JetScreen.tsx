@@ -24,7 +24,7 @@ function JetScreen(props: any) {
       </View>
       {
         Object.values(City).map(place => (
-          <View style={styles.menuItem}>
+          <View key={place} style={styles.menuItem}>
             <TouchableRipple onPress={() => { goToCity(place) }}>
               <Text style={styles.place}>{place}</Text>
             </TouchableRipple>
