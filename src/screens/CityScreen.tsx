@@ -4,7 +4,7 @@ import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Car
 import { useDispatch, useSelector } from 'react-redux';
 import { City, Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
-import { buyDrug, decrementDay, depositMoney, freeDrug, sellDrug, withdrawMoney } from '../actions/DopeActions';
+import { borrowMoney, buyDrug, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, withdrawMoney } from '../actions/DopeActions';
 import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
 
 function CityScreen(props: any) {
@@ -35,6 +35,11 @@ function CityScreen(props: any) {
   const [bankAmount, setBankAmount] = React.useState('');
   const [bankError, setBankError] = React.useState(false);
 
+  const [loanVisible, setLoanVisible] = React.useState(false);
+  const [loanState, setLoanState] = React.useState(0); // 0 is menu, 1 is repay, 2 is borrow
+  const [loanAmount, setLoanAmount] = React.useState('');
+  const [loanError, setLoanError] = React.useState(false);
+
   const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
 
   const sellDialog = () =>
@@ -61,6 +66,16 @@ function CityScreen(props: any) {
     setBankVisible(false);
     setBankAmount('');
     setBankState(0);
+  }
+
+  const loanDialog = () => {
+    setLoanVisible(true);
+  }
+
+  const closeLoanDialog = () => {
+    setLoanVisible(false);
+    setLoanAmount('');
+    setLoanState(0);
   }
 
   const eventDialog = () =>
@@ -170,9 +185,7 @@ function CityScreen(props: any) {
               )}
               {cityState.currentCity == City.Bronx && (
                 <Button
-                  onPress={() => {
-                    console.log("loan shark");
-                  }}
+                  onPress={loanDialog}
                   mode="contained"
                   icon="shark">
                   Loan Shark
@@ -359,6 +372,74 @@ function CityScreen(props: any) {
                   setBankAmount('');
                   setBankError(false);
                   setBankState(0);
+                }}>Cancel</Button>
+              </Dialog.Actions>
+            )}
+          </Dialog>
+
+          {/* Loan shark dialog */}
+          <Dialog
+            visible={loanVisible}
+            onDismiss={closeLoanDialog}>
+            <Dialog.Title>Loan Shark</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">
+                {loanState == 0 && "You are visiting the Loan Shark, would you like to repay your debt or borrow?"}
+                {loanState == 1 && "How much would you like to pay back?"}
+                {loanState == 2 && "How much would you like to borrow?"}
+              </Text>
+              {loanState > 0 && <View><TextInput
+                value={loanAmount}
+                onChangeText={(value) => {
+                  if (value == '' || numre.test(value)) {
+                    let val = Number(value);
+                    if (
+                      (loanState == 1 &&
+                        (val > dopeState.loan
+                          || val > dopeState.cash)) ||
+                      (loanState == 2 &&
+                        val > dopeState.cash * 10)) {
+                      setLoanError(true);
+                    } else {
+                      setLoanError(false);
+                    }
+                    setLoanAmount(value);
+                  }
+                }}
+                error={loanError} />
+                <HelperText type="error" visible={loanError}>
+                  {loanState == 1 && Number(loanAmount) > dopeState.loan && Number(loanAmount) < dopeState.cash &&
+                    "You do not owe that much."}
+                  {loanState == 1 && Number(loanAmount) > dopeState.cash &&
+                    "You do not have that much cash on hand."}
+                  {loanState == 2 && "The loan shark will not loan you that much today."}
+                </HelperText></View>}
+            </Dialog.Content>
+            {loanState == 0 && (
+              <Dialog.Actions>
+                <Button onPress={() => setLoanState(1)}>Repay Debt</Button>
+                <Button onPress={() => setLoanState(2)}>Borrow</Button>
+                <Button onPress={closeLoanDialog}>Done</Button>
+              </Dialog.Actions>
+            )}
+            {loanState > 0 && (
+              <Dialog.Actions>
+                <Button
+                  disabled={loanAmount == '' || Number(loanAmount) == 0 || loanError}
+                  onPress={() => {
+                    if (loanState == 1) {
+                      dispatch(payLoan(Number(loanAmount)));
+                    } else {
+                      dispatch(borrowMoney(Number(loanAmount)));
+                    }
+                    setLoanAmount('');
+                    setLoanError(false);
+                    setLoanState(0);
+                  }}>Ok</Button>
+                <Button onPress={() => {
+                  setLoanAmount('');
+                  setLoanError(false);
+                  setLoanState(0);
                 }}>Cancel</Button>
               </Dialog.Actions>
             )}
