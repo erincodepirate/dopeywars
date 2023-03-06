@@ -94,6 +94,11 @@ export const dopeReducer = createReducer(
             .addCase(decrementDay, (state, action) => {
                 var s = _.cloneDeep(state);
                 s.days--;
+                // add interest to bank account and loan
+                if (s.days < 30 && s.days > 0) {
+                    s.bank = s.bank + Math.floor(s.bank * .06);
+                    s.loan = s.loan + Math.floor(s.loan * .125);
+                }
                 return s;
             })
             .addCase(payLoan, (state, action) => {
