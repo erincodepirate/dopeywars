@@ -339,12 +339,17 @@ function CityScreen(props: any) {
             )}
             {bankState > 0 && (
               <Dialog.Actions>
-                <Button onPress={() => {
+                <Button 
+                  disabled={bankAmount == '' || Number(bankAmount) == 0 || bankError}
+                  onPress={() => {
                   if (bankState == 1) {
                     dispatch(withdrawMoney(Number(bankAmount)));
                   } else {
                     dispatch(depositMoney(Number(bankAmount)));
                   }
+                  setBankAmount('');
+                  setBankError(false);
+                  setBankState(0);
                 }}>Ok</Button>
                 <Button onPress={() => {
                   setBankAmount('');
