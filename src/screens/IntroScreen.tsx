@@ -8,10 +8,10 @@ function IntroScreen(props: any) {
     <View style={styles.container}>
       <Text style={styles.header}>DopeyWars</Text>
       <Text>{"\n"}by Erin Clark{"\n\n"}</Text>
-        <Image
-          style={styles.raccoon}
-          source={require("../../images/raccdealer.png")}
-        />
+      <Image
+        style={styles.raccoon}
+        source={require("../../images/raccdealer.png")}
+      />
       <Text>{"\n\n"}</Text>
       <Button
         onPress={() => {
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    fontSize: 32 
+    fontSize: 32
   },
   raccoon: {
     height: 128,
