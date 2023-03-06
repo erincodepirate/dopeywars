@@ -216,7 +216,9 @@ function CityScreen(props: any) {
                         }
                       }}
                       error={buyError} />
-                    {buyError && <Text style={styles.error}>You cannot afford that much {activeDrug.drug}</Text>}
+                    <HelperText type="error" visible={buyError}>
+                      You cannot afford that much {activeDrug.drug}
+                    </HelperText>
                   </View>)
                   : (<Text variant="bodyMedium">You cannot afford any {activeDrug.drug}.</Text>)
                 )
@@ -263,11 +265,13 @@ function CityScreen(props: any) {
                     } else {
                       setSellError(false);
                     }
+                    setAmountToSell(value);
                   }
-                  setAmountToSell(value)
                 }}
                 error={sellError} />}
-              {sellError && <Text style={styles.error}>You do not have that much {activeDrug.drug}</Text>}
+              <HelperText type="error" visible={sellError}>
+                You do not have that much {activeDrug.drug}
+              </HelperText>
             </Dialog.Content>
             <Dialog.Actions>
               {dopeState.drugs[activeDrug.drug] > 0 &&
@@ -339,18 +343,18 @@ function CityScreen(props: any) {
             )}
             {bankState > 0 && (
               <Dialog.Actions>
-                <Button 
+                <Button
                   disabled={bankAmount == '' || Number(bankAmount) == 0 || bankError}
                   onPress={() => {
-                  if (bankState == 1) {
-                    dispatch(withdrawMoney(Number(bankAmount)));
-                  } else {
-                    dispatch(depositMoney(Number(bankAmount)));
-                  }
-                  setBankAmount('');
-                  setBankError(false);
-                  setBankState(0);
-                }}>Ok</Button>
+                    if (bankState == 1) {
+                      dispatch(withdrawMoney(Number(bankAmount)));
+                    } else {
+                      dispatch(depositMoney(Number(bankAmount)));
+                    }
+                    setBankAmount('');
+                    setBankError(false);
+                    setBankState(0);
+                  }}>Ok</Button>
                 <Button onPress={() => {
                   setBankAmount('');
                   setBankError(false);
