@@ -20,7 +20,7 @@ function JetScreen(props: any) {
   return (
     <View style={styles.container}>
       <View style={styles.menuItem}>
-        <Divider/>
+        <Divider />
       </View>
       {
         Object.values(City).map(place => (
@@ -33,16 +33,16 @@ function JetScreen(props: any) {
         ))
       }
       <View style={styles.cityStatus}>
-      {
-        cityState.currentCity &&
-        <Card>
-          <Card.Content>
-            <Text>
-              Current location: {cityState.currentCity}
-            </Text>
-          </Card.Content>
-        </Card>
-      }
+        {
+          cityState.currentCity &&
+          <Card>
+            <Card.Content>
+              <Text>
+                Current location: {cityState.currentCity}
+              </Text>
+            </Card.Content>
+          </Card>
+        }
       </View>
     </View>
   );
