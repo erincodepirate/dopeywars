@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card } from 'react-native-paper';
+import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card, HelperText } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { Drug, EventTypes } from '../Enums';
+import { City, Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
-import { buyDrug, decrementDay, freeDrug, sellDrug } from '../actions/DopeActions';
+import { buyDrug, decrementDay, depositMoney, freeDrug, sellDrug, withdrawMoney } from '../actions/DopeActions';
 import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
 
 function CityScreen(props: any) {
@@ -20,12 +20,21 @@ function CityScreen(props: any) {
   const [eventVisible, setEventVisible] = React.useState(false);
   const [eventMessage, setEventMessage] = React.useState("");
   const [eventIndex, setEventIndex] = React.useState(0);
+
   const [buyVisible, setBuyVisible] = React.useState(false);
   const [buyError, setBuyError] = React.useState(false);
+
   const [sellVisible, setSellVisible] = React.useState(false);
   const [sellError, setSellError] = React.useState(false);
+
   const [amountToBuy, setAmountToBuy] = React.useState('');
   const [amountToSell, setAmountToSell] = React.useState('');
+
+  const [bankVisible, setBankVisible] = React.useState(false);
+  const [bankState, setBankState] = React.useState(0); // 0 is menu, 1 is withdraw, 2 is deposit
+  const [bankAmount, setBankAmount] = React.useState('');
+  const [bankError, setBankError] = React.useState(false);
+
   const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
 
   const sellDialog = () =>
@@ -44,13 +53,23 @@ function CityScreen(props: any) {
     setBuyVisible(false);
   }
 
+  const bankDialog = () => {
+    setBankVisible(true);
+  }
+
+  const closeBankDialog = () => {
+    setBankVisible(false);
+    setBankAmount('');
+    setBankState(0);
+  }
+
   const eventDialog = () =>
     setEventVisible(true);
 
   const handleNextEvent = () => {
     if (eventIndex < cityState.events.length) {
       let event = cityState.events[eventIndex];
-      switch(event.event) {
+      switch (event.event) {
         case EventTypes.drugBust:
           dispatch(drugBust(event.drug));
           break;
@@ -141,6 +160,24 @@ function CityScreen(props: any) {
               <Text>Days remaining: {dopeState.days}</Text>
             </Card.Content>
             <Card.Actions>
+              {cityState.currentCity == City.Bronx && (
+                <Button
+                  onPress={bankDialog}
+                  mode="contained"
+                  icon="piggy-bank">
+                  Bank
+                </Button>
+              )}
+              {cityState.currentCity == City.Bronx && (
+                <Button
+                  onPress={() => {
+                    console.log("loan shark");
+                  }}
+                  mode="contained"
+                  icon="shark">
+                  Loan Shark
+                </Button>
+              )}
               <Button
                 onPress={() => {
                   navigation.navigate('Jet');
@@ -155,6 +192,7 @@ function CityScreen(props: any) {
 
 
         <Portal>
+          {/* Buy dialog */}
           <Dialog
             visible={buyVisible}
             onDismiss={closeBuyDialog}>
@@ -200,6 +238,8 @@ function CityScreen(props: any) {
               </Button>
             </Dialog.Actions>
           </Dialog>
+
+          {/* Sell dialog */}
           <Dialog
             visible={sellVisible}
             onDismiss={closeSellDialog}>
@@ -243,6 +283,8 @@ function CityScreen(props: any) {
               </Button>
             </Dialog.Actions>
           </Dialog>
+
+          {/* Event dialog */}
           <Dialog
             visible={eventVisible}
             onDismiss={closeEventDialog}>
@@ -252,6 +294,65 @@ function CityScreen(props: any) {
             <Dialog.Actions>
               <Button onPress={closeEventDialog}>Ok</Button>
             </Dialog.Actions>
+          </Dialog>
+
+          {/* Bank dialog */}
+          <Dialog
+            visible={bankVisible}
+            onDismiss={closeBankDialog}>
+            <Dialog.Title>Bank</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">
+                {bankState == 0 && "Welcome to the bank, would you like to withdraw or deposit?"}
+                {bankState == 1 && "How much would you like to withdraw?"}
+                {bankState == 2 && "How much would you like to deposit?"}
+              </Text>
+              {bankState > 0 && <View><TextInput
+                value={bankAmount}
+                onChangeText={(value) => {
+                  if (value == '' || numre.test(value)) {
+                    let val = Number(value);
+                    if (
+                      (bankState == 1 &&
+                        val > dopeState.bank) ||
+                      (bankState == 2 &&
+                        val > dopeState.cash)) {
+                      setBankError(true);
+                    } else {
+                      setBankError(false);
+                    }
+                    setBankAmount(value);
+                  }
+                }}
+                error={bankError} />
+                <HelperText type="error" visible={bankError}>
+                  {bankState == 1 && "You cannot withdraw that much."}
+                  {bankState == 2 && "You do not have that much to deposit."}
+                </HelperText></View>}
+            </Dialog.Content>
+            {bankState == 0 && (
+              <Dialog.Actions>
+                <Button onPress={() => setBankState(1)}>Withdraw</Button>
+                <Button onPress={() => setBankState(2)}>Deposit</Button>
+                <Button onPress={closeBankDialog}>Done</Button>
+              </Dialog.Actions>
+            )}
+            {bankState > 0 && (
+              <Dialog.Actions>
+                <Button onPress={() => {
+                  if (bankState == 1) {
+                    dispatch(withdrawMoney(Number(bankAmount)));
+                  } else {
+                    dispatch(depositMoney(Number(bankAmount)));
+                  }
+                }}>Ok</Button>
+                <Button onPress={() => {
+                  setBankAmount('');
+                  setBankError(false);
+                  setBankState(0);
+                }}>Cancel</Button>
+              </Dialog.Actions>
+            )}
           </Dialog>
         </Portal>
       </View>
