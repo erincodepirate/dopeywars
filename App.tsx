@@ -1,13 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as StoreProvider } from 'react-redux';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider, Text } from 'react-native-paper';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import IntroScreen from "./src/screens/IntroScreen";
 import JetScreen from "./src/screens/JetScreen";
 import CityScreen from "./src/screens/CityScreen";
 import { dopeReducer } from './src/reducers/DopeReducer';
 import { cityReducer } from './src/reducers/CityReducer';
+import { Image, StyleSheet, View } from 'react-native';
 
 const Stack = createStackNavigator();
 const Store = configureStore({
@@ -20,27 +21,60 @@ const Store = configureStore({
 
 
 export default function App() {
+  const styles = StyleSheet.create({
+    titleImage: {
+      width: 48,
+      height: 48
+    },
+    titleText: {
+      fontSize: 32
+    },
+    title: {
+      flexDirection: "row"
+    }
+  });
+
+  function LogoTitle(props: any) {
+    console.log(props);
+    return <View style={styles.title}>
+      <Image
+        style={styles.titleImage}
+        source={require("./images/raccicon.png")}
+      />
+      <Text style={styles.titleText}> {props.title}</Text>
+    </View>
+  }
   return (
     <StoreProvider store={Store}>
       <PaperProvider>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
-              headerShown: false,
-              title: "DopeyWars"
+              title: "DopeyWars",
             }}
           >
             <Stack.Screen
               name="Intro"
               component={IntroScreen}
+              options={{
+                headerShown: false
+              }}
             />
             <Stack.Screen
               name="Jet"
               component={JetScreen}
+              options={{
+                headerTitle: (props) => <LogoTitle {...props} title="Where to?" />,
+                headerLeft: () => <></>
+              }}
             />
             <Stack.Screen
               name="City"
               component={CityScreen}
+              options={{
+                headerTitle: (props) => <LogoTitle {...props} title={Store.getState().cityState.currentCity} />,
+                headerLeft: () => <></>
+              }}
             />
           </Stack.Navigator>
         </NavigationContainer>
