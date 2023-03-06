@@ -35,7 +35,6 @@ export default function App() {
   });
 
   function LogoTitle(props: any) {
-    console.log(props);
     return <View style={styles.title}>
       <Image
         style={styles.titleImage}
