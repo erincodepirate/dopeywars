@@ -12,6 +12,8 @@ function IntroScreen(props: any) {
         style={styles.raccoon}
         source={require("../../images/raccdealer.png")}
       />
+      <Text>Inspired by DopeWars for Palm by Matthew Lee and Michael Hallet</Text>
+      <Text>As well as the original Drug Wars by John E. Dell</Text>
       <Text>{"\n\n"}</Text>
       <Button
         onPress={() => {
