@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
 import { buyDrug, decrementDay, freeDrug, sellDrug } from '../actions/DopeActions';
-import { visit } from '../actions/CityActions';
+import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
 
 function CityScreen(props: any) {
   const { navigation } = props;
@@ -50,7 +50,20 @@ function CityScreen(props: any) {
   const handleNextEvent = () => {
     if (eventIndex < cityState.events.length) {
       let event = cityState.events[eventIndex];
-      dispatch(event.eventAction(event.drug));
+      switch(event.event) {
+        case EventTypes.drugBust:
+          dispatch(drugBust(event.drug));
+          break;
+        case EventTypes.drugCheaper:
+          dispatch(drugCheaper(event.drug));
+          break;
+        case EventTypes.drugFree:
+          dispatch(freeDrug(event.drug));
+          break;
+        case EventTypes.drugExpensive:
+          dispatch(drugExpensive(event.drug));
+          break;
+      }
       setEventMessage(event.message);
       setEventVisible(true);
       setEventIndex(eventIndex + 1);

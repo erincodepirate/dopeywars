@@ -1,6 +1,5 @@
 import { City, Drug, Weapon, EventTypes } from '../Enums';
 import { drugBust, drugCheaper, drugExpensive, loadCity, visit } from '../actions/CityActions';
-import { freeDrug } from '../actions/DopeActions';
 import { DrugMap, DrugForSale, LocationEvent } from '../Interfaces';
 import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
@@ -40,19 +39,19 @@ const eventMethods = {
         if (drug.drug == Drug.Weed) {
             message = "Smugglers got past border patrol. " + drug.drug + " is super cheap.";
         }
-        return { drug: drug, message: message, eventAction: drugCheaper }
+        return { drug: drug, message: message, event: EventTypes.drugCheaper }
     },
     bust: (drug: DrugForSale): LocationEvent => { // cops did a bust, drug becomes more expensive
         let message = "The cops just did a " + drug.drug + " bust! Prices went way up!";
-        return { drug: drug, message: message, eventAction: drugBust };
+        return { drug: drug, message: message, event: EventTypes.drugBust };
     },
     expensive: (drug: DrugForSale): LocationEvent => { // addicts are buying drug at a higher price
         let message = "Addicts are buying " + drug.drug + " at a high price! Prices went way up!";
-        return { drug: drug, message: message, eventAction: drugExpensive };
+        return { drug: drug, message: message, event: EventTypes.drugExpensive };
     },
     free: (drug: DrugForSale): LocationEvent => { // found some free of this drug
         let message = "You found some " + drug.drug + " on a dead person in the subway!";
-        return { drug: drug, message: message, eventAction: freeDrug };
+        return { drug: drug, message: message, event: EventTypes.drugFree };
     }
 }
 

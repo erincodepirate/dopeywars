@@ -1,4 +1,3 @@
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import { City, Drug, Weapon, EventTypes } from './Enums';
 import { CityState } from './reducers/CityReducer';
 import { DopeState } from './reducers/DopeReducer';
@@ -22,7 +21,7 @@ export interface DrugHeld {
 export interface LocationEvent {
   drug: DrugForSale,
   message: string,
-  eventAction: ActionCreatorWithPayload<DrugForSale>
+  event: EventTypes 
 }
 
 export type DrugMap = {
