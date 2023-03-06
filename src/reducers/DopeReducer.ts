@@ -96,7 +96,7 @@ export const dopeReducer = createReducer(
                 s.days--;
                 // add interest to bank account and loan
                 if (s.days < 30 && s.days > 0) {
-                    s.bank = s.bank + Math.floor(s.bank * .06);
+                    s.bank = s.bank + Math.floor(s.bank * .0625);
                     s.loan = s.loan + Math.floor(s.loan * .125);
                 }
                 return s;
