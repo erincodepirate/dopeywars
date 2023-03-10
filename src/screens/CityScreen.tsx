@@ -193,7 +193,11 @@ function CityScreen(props: any) {
               )}
               <Button
                 onPress={() => {
-                  navigation.navigate('Jet');
+                  if (dopeState.days == 0) {
+                    props.navigation.navigate('Gameover');
+                  } else {
+                    navigation.navigate('Jet');
+                  }
                 }}
                 mode="contained"
                 icon="car-side">

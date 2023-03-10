@@ -1,5 +1,5 @@
 import { Drug, Weapon } from '../Enums';
-import { borrowMoney, buyDrug, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, withdrawMoney } from '../actions/DopeActions';
+import { borrowMoney, buyDrug, decrementDay, depositMoney, freeDrug, newGame, payLoan, sellDrug, withdrawMoney } from '../actions/DopeActions';
 import { createReducer } from '@reduxjs/toolkit'
 import { DrugMap } from '../Interfaces';
 import _ from 'lodash';
@@ -123,6 +123,10 @@ export const dopeReducer = createReducer(
                 var s = _.cloneDeep(state);
                 s.bank -= action.payload;
                 s.cash += action.payload;
+                return s;
+            })
+            .addCase(newGame, (state, action) => {
+                var s = _.cloneDeep(INITIAL_STATE);
                 return s;
             })
     }
