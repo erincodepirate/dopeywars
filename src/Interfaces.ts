@@ -31,7 +31,6 @@ export type DrugMap = {
 export interface RootState {
   dopeState: DopeState;
   cityState: CityState;
-  scoreState: ScoreState;
 }
 
 export interface HighScore {
