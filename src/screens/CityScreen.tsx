@@ -4,8 +4,9 @@ import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Car
 import { useDispatch, useSelector } from 'react-redux';
 import { City, Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
-import { borrowMoney, buyDrug, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, withdrawMoney } from '../actions/DopeActions';
+import { borrowMoney, buyDrug, caughtByPolice, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, upgradeBag, withdrawMoney } from '../actions/DopeActions';
 import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
+import { getRandom } from '../Helpers';
 
 function CityScreen(props: any) {
   const { navigation } = props;
@@ -41,6 +42,12 @@ function CityScreen(props: any) {
   const [loanError, setLoanError] = React.useState(false);
 
   const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
+
+  const [policeVisible, setPoliceVisible] = React.useState(false);
+  const [attemptedToRun, setAttemptedToRun] = React.useState(false);
+  const [ranFromPolice, setRanFromPolice] = React.useState(false);
+
+  const [bagVisible, setBagVisible] = React.useState(false);
 
   const sellDialog = () =>
     setSellVisible(true);
@@ -99,20 +106,42 @@ function CityScreen(props: any) {
           break;
       }
       setEventMessage(event.message);
-      setEventVisible(true);
+      eventDialog();
       setEventIndex(eventIndex + 1);
     }
   }
 
   const closeEventDialog = () => {
     setEventVisible(false);
-    handleNextEvent()
+    handleNextEvent();
+  }
+
+  const bagDialog = () => {
+    setBagVisible(true);
+  }
+
+  const closeBagDialog = () => {
+    setBagVisible(false);
+  }
+
+  const policeDialog = () => {
+    setPoliceVisible(true);
+  }
+
+  const closePoliceDialog = () => {
+    setPoliceVisible(false);
   }
 
   useEffect(() => {
     if (!cityState.hasVisited) {
       dispatch(decrementDay());
       dispatch(visit());
+      if (cityState.newBagForSale) {
+        bagDialog();
+      }
+      if (cityState.policeEncounter) {
+        policeDialog();
+      }
       if (eventIndex < cityState.events.length) {
         handleNextEvent();
       }
@@ -169,9 +198,9 @@ function CityScreen(props: any) {
           <Card>
             <Card.Content>
               <Text>Cash on Hand: {dopeState.cash}</Text>
-              <Text>Health: {dopeState.health}</Text>
               <Text>Cash in Bank: {dopeState.bank}</Text>
               <Text>Loan owed: {dopeState.loan}</Text>
+              <Text>Bag capacity: {dopeState.capacityUsed} / {dopeState.capacity}</Text>
               <Text>Days remaining: {dopeState.days}</Text>
             </Card.Content>
             <Card.Actions>
@@ -448,6 +477,59 @@ function CityScreen(props: any) {
               </Dialog.Actions>
             )}
           </Dialog>
+
+          {/* Police encounter */}
+          <Dialog
+            visible={policeVisible}
+            dismissable={false}>
+            <Dialog.Title>Police Encounter</Dialog.Title>
+            <Dialog.Content>
+              {!attemptedToRun ?
+                (<Text>Officer Piggy is on your tail, attempt to run.</Text>) :
+                !ranFromPolice ? (<Text>Officer Piggy caught you, you lose all your drugs and half of your money.</Text>) : 
+                  (<Text>You narrowly escaped Officer Piggy</Text>)
+              }
+            </Dialog.Content>
+            <Dialog.Actions>
+              {!attemptedToRun ? (<Button onPress={() => {
+                setRanFromPolice(getRandom(3) < 2);
+                setAttemptedToRun(true);
+              }}>
+                Run
+              </Button>) :
+              (<Button onPress={() => {
+                if (!ranFromPolice) {
+                  dispatch(caughtByPolice());
+                }
+                closePoliceDialog();
+              }}>
+                {ranFromPolice ? "Whew" : "Bummer"}
+              </Button>)
+              }
+            </Dialog.Actions>
+          </Dialog>
+
+          {/* Buy a new bag dialog */}
+          <Dialog
+            visible={bagVisible}
+            onDismiss={closeBagDialog}>
+            <Dialog.Title>Buy new bag</Dialog.Title>
+            <Dialog.Content>
+              <Text>A street vendor is selling a larger bag for $200, would you like to upgrade?</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button disabled={dopeState.cash < 200} onPress={() => {
+                dispatch(upgradeBag({price: 200, capacity: 20}));
+                closeBagDialog();
+              }}>
+                Yes
+              </Button>
+              <Button onPress={closeBagDialog}>
+                No
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+
         </Portal>
       </View>
     </Provider>

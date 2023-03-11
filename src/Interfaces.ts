@@ -21,7 +21,7 @@ export interface DrugHeld {
 export interface LocationEvent {
   drug: DrugForSale,
   message: string,
-  event: EventTypes 
+  event: EventTypes
 }
 
 export type DrugMap = {
@@ -34,6 +34,11 @@ export interface RootState {
 }
 
 export interface HighScore {
-    name: String,
-    cash: number,
+  name: String,
+  cash: number,
+}
+
+export interface NewBag {
+  capacity: number,
+  price: number,
 }
