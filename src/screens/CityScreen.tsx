@@ -66,6 +66,14 @@ function CityScreen(props: any) {
     setBuyVisible(false);
   }
 
+  const howMuchCanIBuy = (price: number) => {
+    let totalAfford = Math.floor(dopeState.cash / price);
+    if (totalAfford > dopeState.capacityRemaining) {
+      return dopeState.capacityRemaining;
+    }
+    return totalAfford;
+  }
+
   const bankDialog = () => {
     setBankVisible(true);
   }
@@ -248,13 +256,14 @@ function CityScreen(props: any) {
               {activeDrug.price != 0 ?
                 (activeDrug.price < dopeState.cash ?
                   (<View>
-                    <Text variant="bodyMedium">How much {activeDrug.drug} do you want to buy?</Text>
+                    <Text variant="bodyMedium">
+                      You can buy up to {howMuchCanIBuy(activeDrug.price)} of {activeDrug.drug}. How much do you want to buy?</Text>
                     <TextInput
                       value={amountToBuy}
                       onChangeText={(value) => {
                         if (value == '' || numre.test(value)) {
                           let val = Number(value);
-                          if (activeDrug.price * val > dopeState.cash || val + dopeState.capacityUsed > dopeState.capacity) {
+                          if (activeDrug.price * val > dopeState.cash || val > dopeState.capacityRemaining) {
                             setBuyError(true);
                           } else {
                             setBuyError(false);
@@ -264,7 +273,9 @@ function CityScreen(props: any) {
                       }}
                       error={buyError} />
                     <HelperText type="error" visible={buyError}>
-                      You cannot afford that much {activeDrug.drug}
+                      {activeDrug.price * Number(amountToBuy) > dopeState.cash ?
+                        "You cannot afford that much " :
+                        "You do not have room to hold that much"} {activeDrug.drug}.
                     </HelperText>
                   </View>)
                   : (<Text variant="bodyMedium">You cannot afford any {activeDrug.drug}.</Text>)
@@ -275,12 +286,19 @@ function CityScreen(props: any) {
             </Dialog.Content>
             <Dialog.Actions>
               {(activeDrug.price != 0 && activeDrug.price < dopeState.cash) &&
-                <Button
-                  disabled={amountToBuy == '' || Number(amountToBuy) == 0 || buyError}
-                  onPress={() => {
-                    dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToBuy) }));
-                    closeBuyDialog();
-                  }}>Buy</Button>
+                <>
+                  <Button
+                    onPress={() => {
+                      dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: dopeState.capacityRemaining }));
+                      closeBuyDialog();
+                    }}>Max Amount</Button>
+                  <Button
+                    disabled={amountToBuy == '' || Number(amountToBuy) == 0 || buyError}
+                    onPress={() => {
+                      dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToBuy) }));
+                      closeBuyDialog();
+                    }}>Buy</Button>
+                </>
               }
               <Button onPress={closeBuyDialog}>
                 {(activeDrug.price != 0 && activeDrug.price < dopeState.cash) ? "Cancel" : "Close"}
@@ -296,7 +314,9 @@ function CityScreen(props: any) {
             <Dialog.Content>
               {dopeState.drugs[activeDrug.drug] > 0
                 ? activeDrug.price != 0 ?
-                  (<Text variant="bodyMedium">How much {activeDrug.drug} do you want to sell? You can sell up to {dopeState.drugs[activeDrug.drug]}</Text>)
+                  (<Text variant="bodyMedium">
+                    You can sell up to {dopeState.drugs[activeDrug.drug]} {activeDrug.drug}. How much do you want to sell?
+                  </Text>)
                   :
                   (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
                 :
@@ -322,12 +342,19 @@ function CityScreen(props: any) {
             </Dialog.Content>
             <Dialog.Actions>
               {dopeState.drugs[activeDrug.drug] > 0 &&
-                <Button
-                  disabled={amountToSell == '' || Number(amountToSell) == 0 || sellError}
-                  onPress={() => {
-                    dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToSell) }));
-                    closeSellDialog();
-                  }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
+                <>
+                  <Button
+                    onPress={() => {
+                      dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: dopeState.drugs[activeDrug.drug] }));
+                      closeSellDialog();
+                    }}>Max Amount</Button>
+                  <Button
+                    disabled={amountToSell == '' || Number(amountToSell) == 0 || sellError}
+                    onPress={() => {
+                      dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: Number(amountToSell) }));
+                      closeSellDialog();
+                    }}>{(activeDrug.price != 0 ? "Sell" : "Dump")}</Button>
+                </>
               }
               <Button onPress={closeSellDialog}>
                 {dopeState.drugs[activeDrug.drug] > 0 ? "Cancel" : "Close"}
@@ -496,7 +523,7 @@ function CityScreen(props: any) {
             <Dialog.Content>
               {!attemptedToRun ?
                 (<Text>Officer Piggy is on your tail, attempt to run.</Text>) :
-                !ranFromPolice ? (<Text>Officer Piggy caught you, you lose all your drugs and half of your money.</Text>) : 
+                !ranFromPolice ? (<Text>Officer Piggy caught you, you lose all your drugs and half of your money.</Text>) :
                   (<Text>You narrowly escaped Officer Piggy</Text>)
               }
             </Dialog.Content>
@@ -507,14 +534,14 @@ function CityScreen(props: any) {
               }}>
                 Run
               </Button>) :
-              (<Button onPress={() => {
-                if (!ranFromPolice) {
-                  dispatch(caughtByPolice());
-                }
-                closePoliceDialog();
-              }}>
-                {ranFromPolice ? "Whew" : "Bummer"}
-              </Button>)
+                (<Button onPress={() => {
+                  if (!ranFromPolice) {
+                    dispatch(caughtByPolice());
+                  }
+                  closePoliceDialog();
+                }}>
+                  {ranFromPolice ? "Whew" : "Bummer"}
+                </Button>)
               }
             </Dialog.Actions>
           </Dialog>
@@ -529,7 +556,7 @@ function CityScreen(props: any) {
             </Dialog.Content>
             <Dialog.Actions>
               <Button disabled={dopeState.cash < 200} onPress={() => {
-                dispatch(upgradeBag({price: 200, capacity: 20}));
+                dispatch(upgradeBag({ price: 200, capacity: 20 }));
                 closeBagDialog();
               }}>
                 Yes

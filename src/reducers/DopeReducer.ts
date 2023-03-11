@@ -13,6 +13,7 @@ export interface DopeState {
     health: number,
     weapon: Weapon,
     capacityUsed: number,
+    capacityRemaining: number,
     capacity: number,
     days: number,
 }
@@ -35,6 +36,7 @@ const INITIAL_STATE: DopeState = {
     health: 100,
     weapon: Weapon.Hands,
     capacityUsed: 0,
+    capacityRemaining: 100,
     capacity: 100,
     days: 31
 };
@@ -46,6 +48,10 @@ function totalInBag(state: DopeState) {
         total += held;
     }
     return total;
+}
+
+function capacityRemaining(state: DopeState) {
+    return state.capacity - state.capacityUsed;
 }
 
 export const dopeReducer = createReducer(
@@ -61,6 +67,7 @@ export const dopeReducer = createReducer(
                     var newAmount = drug.amount + drugsHeld;
                     s.drugs[drug.drug] = newAmount
                     s.capacityUsed = totalInBag(s);
+                    s.capacityRemaining = capacityRemaining(s);
                 }
                 return s;
             })
@@ -73,6 +80,7 @@ export const dopeReducer = createReducer(
                     var newAmount = drugsHeld - drug.amount;
                     s.drugs[drug.drug] = newAmount
                     s.capacityUsed = totalInBag(s);
+                    s.capacityRemaining = capacityRemaining(s);
                 }
                 return s;
             })
@@ -89,6 +97,7 @@ export const dopeReducer = createReducer(
                     var newAmount = drugsHeld + numDrugs;
                     s.drugs[drug.drug] = newAmount
                     s.capacityUsed = totalInBag(s);
+                    s.capacityRemaining = capacityRemaining(s);
                 }
                 return s;
             })
@@ -134,6 +143,7 @@ export const dopeReducer = createReducer(
                 var s = _.cloneDeep(state);
                 s.cash -= action.payload.price;
                 s.capacity += action.payload.capacity;
+                s.capacityRemaining = capacityRemaining(s);
                 return s;
             })
             .addCase(caughtByPolice, (state, action) => {
@@ -142,6 +152,7 @@ export const dopeReducer = createReducer(
                     s.drugs[drugEnum] = 0;
                 }
                 s.capacityUsed = 0;
+                s.capacityRemaining = capacityRemaining(s);
                 s.cash = Math.floor(s.cash / 2);
                 return s;
             })
