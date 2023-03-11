@@ -40,6 +40,7 @@ function CityScreen(props: any) {
   const [loanState, setLoanState] = React.useState(0); // 0 is menu, 1 is repay, 2 is borrow
   const [loanAmount, setLoanAmount] = React.useState('');
   const [loanError, setLoanError] = React.useState(false);
+  const [loanBorrowed, setLoanBorrowed] = React.useState(false); // only allow borrowing once per day
 
   const [activeDrug, setActiveDrug] = React.useState({ drug: Drug.Acid, price: 0 });
 
@@ -418,7 +419,7 @@ function CityScreen(props: any) {
             <Dialog.Content>
               <Text variant="bodyMedium">
                 {loanState == 0 && "You are visiting the Loan Shark, would you like to repay your debt or borrow?"}
-                {loanState == 1 && "How much would you like to pay back?"}
+                {loanState == 1 && "You currently owe: $" + dopeState.loan + ". How much would you like to pay back?"}
                 {loanState == 2 && "How much would you like to borrow?"}
               </Text>
               {loanState > 0 && <View><TextInput
@@ -450,19 +451,28 @@ function CityScreen(props: any) {
             </Dialog.Content>
             {loanState == 0 && (
               <Dialog.Actions>
-                <Button onPress={() => setLoanState(1)}>Repay Debt</Button>
-                <Button onPress={() => setLoanState(2)}>Borrow</Button>
+                <Button disabled={dopeState.loan == 0} onPress={() => setLoanState(1)}>Repay Debt</Button>
+                <Button disabled={loanBorrowed && dopeState.loan > 0} onPress={() => setLoanState(2)}>Borrow</Button>
                 <Button onPress={closeLoanDialog}>Done</Button>
               </Dialog.Actions>
             )}
             {loanState > 0 && (
               <Dialog.Actions>
+                {loanState == 1 && <Button
+                  disabled={dopeState.cash < dopeState.loan}
+                  onPress={() => {
+                    dispatch(payLoan(dopeState.loan));
+                    setLoanAmount('');
+                    setLoanError(false);
+                    setLoanState(0);
+                  }}>Entire Debt</Button>}
                 <Button
                   disabled={loanAmount == '' || Number(loanAmount) == 0 || loanError}
                   onPress={() => {
                     if (loanState == 1) {
                       dispatch(payLoan(Number(loanAmount)));
                     } else {
+                      setLoanBorrowed(true);
                       dispatch(borrowMoney(Number(loanAmount)));
                     }
                     setLoanAmount('');
