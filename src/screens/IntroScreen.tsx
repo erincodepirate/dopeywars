@@ -3,7 +3,6 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 function IntroScreen(props: any) {
-  console.log(props);
   return (
     <View style={styles.container}>
       <Text style={styles.header}>DopeyWars</Text>
