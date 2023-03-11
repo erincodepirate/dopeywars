@@ -1,10 +1,11 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Button, Card, DataTable, Dialog, Provider, Text, TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import { newGame } from '../actions/DopeActions';
-import { clearScores, newScore } from '../actions/ScoreActions';
-import { RootState } from '../Interfaces';
+import { HighScore, RootState } from '../Interfaces';
 
 enum endStatuses {
     in_debt = "The loan shark took everything from you.",
@@ -33,6 +34,7 @@ function GameoverScreen(props: any) {
     const [newScoreVisible, setNewScoreVisible] = React.useState(false);
     const [clearScoresVisible, setClearScoresVisible] = React.useState(false);
     const [playerName, setPlayerName] = React.useState('');
+    const [highScores, setHighScores] = React.useState<HighScore[]>([]);
 
     const clearScoresDialog = () =>
         setClearScoresVisible(true);
@@ -46,14 +48,45 @@ function GameoverScreen(props: any) {
     const closeNewScoreDialog = () =>
         setNewScoreVisible(false);
 
+    const scoreStorageKey = '@dopey_scores'
+
+    const getScores = async () => {
+        const s = await AsyncStorage.getItem(scoreStorageKey);
+        if (s) {
+            let parsedScores = JSON.parse(s);
+            if (Array.isArray(parsedScores)) {
+                setHighScores(parsedScores);
+            }
+        }
+    }
+
+    const saveScores = async (scores: HighScore[]) => {
+        setHighScores(scores);
+        AsyncStorage.setItem(scoreStorageKey, JSON.stringify(scores));
+    }
+
+    const setNewScore = (name: String) => {
+        let newScore = { name: name, cash: finalCash };
+        let scores = highScores;
+        scores.push(newScore);
+        scores = _.orderBy(scores, "cash", "desc");
+        if (scores.length > 5) {
+            scores.pop();
+        }
+        setHighScores(scores);
+        saveScores(scores);
+    }
+
     useEffect(() => {
-        let lowestScore = 0;
-        if (scoreState.scores.length == 5) {
-            lowestScore = scoreState.scores[scoreState.scores.length - 1].cash;
-        }
-        if (finalCash > lowestScore) {
-            setNewScoreVisible(true);
-        }
+        getScores().then(() => {
+            let lowestScore = 0;
+            if (highScores.length == 5) {
+                lowestScore = highScores[scoreState.scores.length - 1].cash;
+            }
+            if (finalCash > lowestScore) {
+                newScoreDialog();
+            }
+        });
     }, []);
 
     const startNewGame = () => {
@@ -64,26 +97,28 @@ function GameoverScreen(props: any) {
     return (
         <Provider>
             <View style={styles.container}>
-                <Text style={styles.scoresTitle}>High Scores</Text>
-                <DataTable>
-                    <DataTable.Header>
-                        <DataTable.Title>Name</DataTable.Title>
-                        <DataTable.Title>Score</DataTable.Title>
-                    </DataTable.Header>
-                    <FlatList data={scoreState.scores} renderItem={({ item }) => {
-                        return (
-                            <DataTable.Row>
-                                <DataTable.Cell>
-                                    {item.name}
-                                </DataTable.Cell>
-                                <DataTable.Cell>
-                                    ${item.cash}
-                                </DataTable.Cell>
-                            </DataTable.Row>
-                        )
-                    }}
-                    />
-                </DataTable>
+                {highScores.length > 0 && (<View style={styles.highScores}>
+                    <Text style={styles.scoresTitle}>High Scores</Text>
+                    <DataTable>
+                        <DataTable.Header>
+                            <DataTable.Title>Name</DataTable.Title>
+                            <DataTable.Title>Score</DataTable.Title>
+                        </DataTable.Header>
+                        <FlatList data={highScores} renderItem={({ item }) => {
+                            return (
+                                <DataTable.Row>
+                                    <DataTable.Cell>
+                                        {item.name}
+                                    </DataTable.Cell>
+                                    <DataTable.Cell>
+                                        ${item.cash}
+                                    </DataTable.Cell>
+                                </DataTable.Row>
+                            )
+                        }}
+                        />
+                    </DataTable>
+                </View>)}
                 <Card>
                     <Card.Content>
                         <View style={styles.finalCash}>
@@ -114,7 +149,7 @@ function GameoverScreen(props: any) {
                     </Dialog.Content>
                     <Dialog.Actions>
                         <Button onPress={() => {
-                            dispatch(newScore({ name: playerName, cash: finalCash }));
+                            setNewScore(playerName);
                             closeNewScoreDialog();
                         }}>
                             Ok
@@ -130,7 +165,7 @@ function GameoverScreen(props: any) {
                     </Dialog.Content>
                     <Dialog.Actions>
                         <Button onPress={() => {
-                            dispatch(clearScores());
+                            saveScores([]);
                             closeClearScoresDialog();
                         }}>
                             Yes
@@ -151,7 +186,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: 350
+    },
+    highScores: {
+        width: "100%"
     },
     label: {
         fontWeight: 'bold'
@@ -160,7 +197,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     scoresTitle: {
-        fontSize:28,
+        fontSize: 28,
         textAlign: 'center'
     }
 });

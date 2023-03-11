@@ -10,14 +10,12 @@ import CityScreen from "./src/screens/CityScreen";
 import GameoverScreen from "./src/screens/GameoverScreen";
 import { dopeReducer } from './src/reducers/DopeReducer';
 import { cityReducer } from './src/reducers/CityReducer';
-import { scoreReducer } from './src/reducers/ScoreReducer';
 
 const Stack = createStackNavigator();
 const Store = configureStore({
   reducer: combineReducers({
     dopeState: dopeReducer,
-    cityState: cityReducer,
-    scoreState: scoreReducer
+    cityState: cityReducer
   }),
 })
 
