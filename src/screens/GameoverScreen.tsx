@@ -16,7 +16,7 @@ enum endStatuses {
 }
 
 function GameoverScreen(props: any) {
-    const { dopeState, scoreState } = useSelector((state: RootState) => state);
+    const { dopeState } = useSelector((state: RootState) => state);
     const dispatch = useDispatch();
 
     const finalCash = dopeState.cash + dopeState.bank - dopeState.loan;
@@ -81,7 +81,7 @@ function GameoverScreen(props: any) {
         getScores().then(() => {
             let lowestScore = 0;
             if (highScores.length == 5) {
-                lowestScore = highScores[scoreState.scores.length - 1].cash;
+                lowestScore = highScores[highScores.length - 1].cash;
             }
             if (finalCash > lowestScore) {
                 newScoreDialog();

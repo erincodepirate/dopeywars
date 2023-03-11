@@ -1,7 +1,6 @@
 import { City, Drug, Weapon, EventTypes } from './Enums';
 import { CityState } from './reducers/CityReducer';
 import { DopeState } from './reducers/DopeReducer';
-import { ScoreState } from './reducers/ScoreReducer';
 
 export interface DrugForSale {
   drug: Drug;
