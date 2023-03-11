@@ -3,6 +3,7 @@ import { borrowMoney, buyDrug, decrementDay, depositMoney, freeDrug, newGame, pa
 import { createReducer } from '@reduxjs/toolkit'
 import { DrugMap } from '../Interfaces';
 import _ from 'lodash';
+import { getRandom } from '../Helpers';
 
 export interface DopeState {
     drugs: DrugMap,
@@ -78,7 +79,7 @@ export const dopeReducer = createReducer(
             .addCase(freeDrug, (state, action) => {
                 var s = _.cloneDeep(state);
                 var drug = action.payload;
-                let numDrugs = 2 + Math.floor(Math.random() * 4); // 2-5 drugs found
+                let numDrugs = 2 + getRandom(4); // 2-5 drugs found
                 if (drug) {
                     var drugsHeld = s.drugs[drug.drug];
                     // find a number of drugs that you can hold without going over capacity

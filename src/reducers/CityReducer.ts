@@ -3,12 +3,15 @@ import { drugBust, drugCheaper, drugExpensive, loadCity, visit } from '../action
 import { DrugMap, DrugForSale, LocationEvent } from '../Interfaces';
 import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
+import { getRandom } from '../Helpers';
 
 export interface CityState {
     drugsForSale: DrugForSale[],
     weaponAvailable: Weapon,
     currentCity: City | null,
     hasVisited: boolean,
+    policeEncounter: boolean,
+    newBagForSale: boolean,
     events: LocationEvent[]
 }
 
@@ -29,6 +32,8 @@ const INITIAL_STATE: CityState =
     weaponAvailable: Weapon.Hands,
     currentCity: null,
     hasVisited: false,
+    policeEncounter: false,
+    newBagForSale: false,
     events: []
 };
 
@@ -97,16 +102,16 @@ export const cityReducer = createReducer(
                 for (const [drugString, drugEnum] of Object.entries(Drug)) {
                     // randomize the price a little
                     let price = defaultDrugPrices[drugEnum];
-                    price = price + Math.floor(price * Math.random());
+                    price = price + getRandom(price);
                     newDrugsForSale.push({ drug: drugEnum, price: price })
                 }
                 // randomly remove up to 3 drugs
                 let randomRemove = Math.floor(Math.random() * 4);
                 let randomIndexes = new Set();
                 for (let i = 0; i < randomRemove; i++) {
-                    let randomIndex = Math.floor(Math.random() * newDrugsForSale.length);
+                    let randomIndex = getRandom(newDrugsForSale.length);
                     while (randomIndexes.has(randomIndex)) {
-                        randomIndex = Math.floor(Math.random() * newDrugsForSale.length);
+                        randomIndex = getRandom(newDrugsForSale.length);
                     }
                     randomIndexes.add(randomIndex);
                     newDrugsForSale[randomIndex].price = 0;
@@ -116,7 +121,7 @@ export const cityReducer = createReducer(
                 // do random events
                 for (let i = 0; i < events.length; i++) {
                     let event = events[i];
-                    let eventRandom = Math.floor(Math.random() * 100);
+                    let eventRandom = getRandom(100);
                     if (eventRandom <= event.freq) {
                         let i = _.findIndex(newDrugsForSale, { drug: event.drug });
                         if (newDrugsForSale[i].price != 0 || event.func == eventMethods.free) {
@@ -127,8 +132,13 @@ export const cityReducer = createReducer(
                     }
                 }
 
+                let policeEncounter = getRandom(4) == 1;
+                let newBagForSale = getRandom(4) == 1;
+
+                s.policeEncounter = policeEncounter;
+                s.newBagForSale = newBagForSale;
                 s.events = newEvents;
-                s.drugsForSale = newDrugsForSale
+                s.drugsForSale = newDrugsForSale;
                 s.hasVisited = false;
                 return s;
             })
