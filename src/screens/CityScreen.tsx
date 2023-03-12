@@ -289,7 +289,7 @@ function CityScreen(props: any) {
                 <>
                   <Button
                     onPress={() => {
-                      dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: dopeState.capacityRemaining }));
+                      dispatch(buyDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: howMuchCanIBuy(activeDrug.price) }));
                       closeBuyDialog();
                     }}>Max Amount</Button>
                   <Button
