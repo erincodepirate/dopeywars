@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cityStatus: {
-    paddingTop: '10px'
+    paddingTop: 10
   }
 });
 
