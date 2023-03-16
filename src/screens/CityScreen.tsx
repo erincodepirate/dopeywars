@@ -14,7 +14,6 @@ function CityScreen(props: any) {
   const { navigation } = props;
 
   const { cityState, dopeState } = useSelector((state: RootState) => state);
-  const drugs: DrugForSale[] = cityState.drugsForSale;
 
   const dispatch = useDispatch();
 
@@ -159,7 +158,6 @@ function CityScreen(props: any) {
     }
   }, []);
 
-
   return (
     <Provider>
       <SafeAreaView style={styles.container}>
@@ -182,31 +180,31 @@ function CityScreen(props: any) {
                 </Text>
               </View>
             </View>
-            <FlatList data={cityState.drugsForSale} extraData={cityState} renderItem={({ item: userData }) => {
+            <FlatList data={cityState.drugsForSale} extraData={cityState} renderItem={({ item }) => {
               return (
-                <View style={styles.row}>
+                <View key={item.drug} style={styles.row}>
                   <TouchableRipple style={styles.cell} onPress={() => {
-                    setActiveDrug(userData);
+                    setActiveDrug(item);
                     sellDialog();
                   }}>
                     <Text style={styles.cellText}>{
-                      dopeState.drugs ? dopeState.drugs[userData.drug] : 0
+                      dopeState.drugs ? dopeState.drugs[item.drug] : 0
                     }</Text>
                   </TouchableRipple>
                   <TouchableRipple style={styles.cell}>
-                    <Text style={styles.cellText}>{userData.drug}</Text>
+                    <Text style={styles.cellText}>{item.drug}</Text>
                   </TouchableRipple>
                   <TouchableRipple style={styles.cell} onPress={() => {
-                    setActiveDrug(userData);
+                    setActiveDrug(item);
                     buyDialog();
                   }}>
-                    <Text style={styles.cellText}>{userData.price ? ("$" + userData.price) : "None"}</Text>
+                    <Text style={styles.cellText}>{item.price ? ("$" + item.price) : "None"}</Text>
                   </TouchableRipple>
                 </View>)
             }}
-            keyExtractor={(drug: DrugForSale) => drug.drug}
+              keyExtractor={(drug: DrugForSale) => drug.drug}
               getItemLayout={(data, index) => (
-                {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
+                { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
               )}
             />
 
@@ -589,7 +587,6 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   table: {
-    flex: 1,
     justifyContent: 'center',
     width: '100%',
   },
