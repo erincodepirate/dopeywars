@@ -1,19 +1,4 @@
 {
-  "expo": {
-    "name": "dopeywars",
-    "slug": "dopeywars",
-    "version": "1.0.0",
-    "sdkVersion": "47.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
-    "android": {
-      "package": "com.erincodepirate.dopeywars"
-    },
-    "ios": {
-      "bundleIdentifier": "com.erincodepirate.dopeywars"
-    }
-  }
+  "name": "dopeywars",
+  "displayName": "DopeyWars"
 }
