@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, SafeAreaView } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card, HelperText } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { City, Drug, EventTypes } from '../Enums';
@@ -7,6 +7,8 @@ import { RootState, DrugForSale } from '../Interfaces';
 import { borrowMoney, buyDrug, caughtByPolice, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, upgradeBag, withdrawMoney } from '../actions/DopeActions';
 import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
 import { getRandom } from '../Helpers';
+
+const ITEM_HEIGHT = 48;
 
 function CityScreen(props: any) {
   const { navigation } = props;
@@ -160,7 +162,7 @@ function CityScreen(props: any) {
 
   return (
     <Provider>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.location}>
           <View style={styles.table}>
             <View style={styles.header}>
@@ -180,28 +182,33 @@ function CityScreen(props: any) {
                 </Text>
               </View>
             </View>
-            <FlatList data={drugs} renderItem={({ item }) => {
+            <FlatList data={cityState.drugsForSale} extraData={cityState} renderItem={({ item: userData }) => {
               return (
                 <View style={styles.row}>
                   <TouchableRipple style={styles.cell} onPress={() => {
-                    setActiveDrug(item);
+                    setActiveDrug(userData);
                     sellDialog();
                   }}>
                     <Text style={styles.cellText}>{
-                      dopeState.drugs ? dopeState.drugs[item.drug] : 0
+                      dopeState.drugs ? dopeState.drugs[userData.drug] : 0
                     }</Text>
                   </TouchableRipple>
                   <TouchableRipple style={styles.cell}>
-                    <Text style={styles.cellText}>{item.drug}</Text>
+                    <Text style={styles.cellText}>{userData.drug}</Text>
                   </TouchableRipple>
                   <TouchableRipple style={styles.cell} onPress={() => {
-                    setActiveDrug(item);
+                    setActiveDrug(userData);
                     buyDialog();
                   }}>
-                    <Text style={styles.cellText}>{item.price ? ("$" + item.price) : "None"}</Text>
+                    <Text style={styles.cellText}>{userData.price ? ("$" + userData.price) : "None"}</Text>
                   </TouchableRipple>
                 </View>)
-            }} keyExtractor={(drug: DrugForSale) => drug.drug} />
+            }}
+            keyExtractor={(drug: DrugForSale) => drug.drug}
+              getItemLayout={(data, index) => (
+                {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
+              )}
+            />
 
           </View>
           <Card>
@@ -568,7 +575,7 @@ function CityScreen(props: any) {
           </Dialog>
 
         </Portal>
-      </View>
+      </SafeAreaView>
     </Provider>
   );
 }
