@@ -1,4 +1,4 @@
-package com.dopeywars_noexpo;
+package com.dopeywars;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "dopeywars_noexpo.app"
-               BlueprintName = "dopeywars_noexpo"
-               ReferencedContainer = "container:dopeywars_noexpo.xcodeproj">
+               BuildableName = "dopeywars.app"
+               BlueprintName = "dopeywars"
+               ReferencedContainer = "container:dopeywars.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "dopeywars_noexpoTests.xctest"
-               BlueprintName = "dopeywars_noexpoTests"
-               ReferencedContainer = "container:dopeywars_noexpo.xcodeproj">
+               BuildableName = "dopeywarsTests.xctest"
+               BlueprintName = "dopeywarsTests"
+               ReferencedContainer = "container:dopeywars.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "dopeywars_noexpo.app"
-            BlueprintName = "dopeywars_noexpo"
-            ReferencedContainer = "container:dopeywars_noexpo.xcodeproj">
+            BuildableName = "dopeywars.app"
+            BlueprintName = "dopeywars"
+            ReferencedContainer = "container:dopeywars.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "dopeywars_noexpo.app"
-            BlueprintName = "dopeywars_noexpo"
-            ReferencedContainer = "container:dopeywars_noexpo.xcodeproj">
+            BuildableName = "dopeywars.app"
+            BlueprintName = "dopeywars"
+            ReferencedContainer = "container:dopeywars.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

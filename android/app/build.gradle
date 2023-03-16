@@ -95,9 +95,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.dopeywars_noexpo"
+    namespace "com.dopeywars"
     defaultConfig {
-        applicationId "com.dopeywars_noexpo"
+        applicationId "com.dopeywars"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

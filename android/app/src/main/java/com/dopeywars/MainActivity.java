@@ -1,4 +1,4 @@
-package com.dopeywars_noexpo;
+package com.dopeywars;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -13,7 +13,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "dopeywars_noexpo";
+    return "dopeywars";
   }
 
   /**
