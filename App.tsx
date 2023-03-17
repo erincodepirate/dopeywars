@@ -1,9 +1,10 @@
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as StoreProvider } from 'react-redux';
-import { Provider as PaperProvider, Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, Appearance } from 'react-native';
 import IntroScreen from "./src/screens/IntroScreen";
 import JetScreen from "./src/screens/JetScreen";
 import CityScreen from "./src/screens/CityScreen";
@@ -22,13 +23,15 @@ const Store = configureStore({
 
 
 export default function App() {
+  const theme = useTheme();
   const styles = StyleSheet.create({
     titleImage: {
       width: 48,
       height: 48
     },
     titleText: {
-      fontSize: 32
+      fontSize: 32,
+      color: theme.colors.onPrimary
     },
     title: {
       flexDirection: "row"
@@ -46,47 +49,47 @@ export default function App() {
   }
   return (
     <StoreProvider store={Store}>
-      <PaperProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              title: "DopeyWars",
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            title: "DopeyWars",
+            headerStyle: { backgroundColor: theme.colors.primary },
+            cardStyle: { backgroundColor: theme.colors.surface }
+          }}
+        >
+          <Stack.Screen
+            name="Intro"
+            component={IntroScreen}
+            options={{
+              headerShown: false
             }}
-          >
-            <Stack.Screen
-              name="Intro"
-              component={IntroScreen}
-              options={{
-                headerShown: false
-              }}
-            />
-            <Stack.Screen
-              name="Jet"
-              component={JetScreen}
-              options={{
-                headerTitle: (props) => <LogoTitle {...props} title="Where to?" />,
-                headerLeft: () => <></>
-              }}
-            />
-            <Stack.Screen
-              name="City"
-              component={CityScreen}
-              options={{
-                headerTitle: (props) => <LogoTitle {...props} title={Store.getState().cityState.currentCity} />,
-                headerLeft: () => <></>
-              }}
-            />
-            <Stack.Screen
-              name="Gameover"
-              component={GameoverScreen}
-              options={{
-                headerTitle: (props) => <LogoTitle {...props} title="Game Over" />,
-                headerLeft: () => <></>
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
+          />
+          <Stack.Screen
+            name="Jet"
+            component={JetScreen}
+            options={{
+              headerTitle: (props) => <LogoTitle {...props} title="Where to?" />,
+              headerLeft: () => <></>
+            }}
+          />
+          <Stack.Screen
+            name="City"
+            component={CityScreen}
+            options={{
+              headerTitle: (props) => <LogoTitle {...props} title={Store.getState().cityState.currentCity} />,
+              headerLeft: () => <></>
+            }}
+          />
+          <Stack.Screen
+            name="Gameover"
+            component={GameoverScreen}
+            options={{
+              headerTitle: (props) => <LogoTitle {...props} title="Game Over" />,
+              headerLeft: () => <></>
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </StoreProvider>
   );
 }

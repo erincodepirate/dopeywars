@@ -88,23 +88,29 @@ function findDrug(drug: Drug, state: CityState) {
     return _.findIndex(state.drugsForSale, { drug: drug });
 }
 
+function getNewDefaultPrices() {
+    let newDrugsForSale: DrugForSale[] = []
+    for (const [drugString, drugEnum] of Object.entries(Drug)) {
+        // randomize the price a little
+        let price = defaultDrugPrices[drugEnum];
+        price = price + getRandom(price);
+        newDrugsForSale.push({ drug: drugEnum, price: price })
+    }
+    return newDrugsForSale;
+}
+
 export const cityReducer = createReducer(
     INITIAL_STATE,
     (builder) => {
         builder
             .addCase(loadCity, (state, action) => {
-                let s = _.cloneDeep(state);
+                let s: CityState = _.cloneDeep(state);
                 let city = action.payload;
                 if (city) {
                     s.currentCity = city;
                 }
-                const newDrugsForSale: DrugForSale[] = []
-                for (const [drugString, drugEnum] of Object.entries(Drug)) {
-                    // randomize the price a little
-                    let price = defaultDrugPrices[drugEnum];
-                    price = price + getRandom(price);
-                    newDrugsForSale.push({ drug: drugEnum, price: price })
-                }
+                const newDrugsForSale = getNewDefaultPrices();
+
                 // randomly remove up to 3 drugs
                 let randomRemove = Math.floor(Math.random() * 4);
                 let randomIndexes = new Set();

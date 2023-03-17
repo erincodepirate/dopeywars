@@ -1,12 +1,13 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Card, Divider, Menu, Text, TouchableRipple } from 'react-native-paper';
+import { Card, Divider, Menu, Text, ThemeProvider, TouchableRipple, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadCity } from '../actions/CityActions';
 import { City } from '../Enums';
 import { RootState } from '../Interfaces';
 
 function JetScreen(props: any) {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const { cityState } = useSelector((state: RootState) => state);
 
@@ -51,7 +52,6 @@ function JetScreen(props: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
