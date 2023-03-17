@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, FlatList, SafeAreaView } from 'react-native';
-import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card, HelperText } from 'react-native-paper';
+import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card, HelperText, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { City, Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
@@ -16,6 +16,8 @@ function CityScreen(props: any) {
   const { cityState, dopeState } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
+
+  const theme = useTheme();
 
   const numre = /^[0-9\b]+$/;
 
@@ -157,6 +159,47 @@ function CityScreen(props: any) {
       }
     }
   }, []);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%'
+    },
+    table: {
+      justifyContent: 'center',
+      width: '100%',
+    },
+    row: {
+      borderStyle: 'solid',
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.colors.onBackground,
+      minHeight: 48,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+    },
+    header: {
+      flexDirection: 'row',
+      height: 48,
+      paddingHorizontal: 16,
+      borderBottomWidth: StyleSheet.hairlineWidth * 2,
+      borderColor: theme.colors.onBackground,
+    },
+    cell: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    cellText: {
+    },
+    location: {
+      width: '100%'
+    },
+    error: {
+      color: 'darkred'
+    }
+  });
 
   return (
     <Provider>
@@ -578,44 +621,6 @@ function CityScreen(props: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%'
-  },
-  table: {
-    justifyContent: 'center',
-    width: '100%',
-  },
-  row: {
-    borderStyle: 'solid',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    minHeight: 48,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-  },
-  header: {
-    flexDirection: 'row',
-    height: 48,
-    paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth * 2,
-  },
-  cell: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cellText: {
-  },
-  location: {
-    width: '100%'
-  },
-  error: {
-    color: 'darkred'
-  }
-});
+
 
 export default CityScreen;
