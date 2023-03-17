@@ -54,7 +54,8 @@ export default function App() {
           screenOptions={{
             title: "DopeyWars",
             headerStyle: { backgroundColor: theme.colors.primary },
-            cardStyle: { backgroundColor: theme.colors.surface }
+            cardStyle: { backgroundColor: theme.colors.surface },
+            animationEnabled: false
           }}
         >
           <Stack.Screen
