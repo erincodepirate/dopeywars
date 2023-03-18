@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import { Button, Card, DataTable, Dialog, Provider, Text, TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -94,48 +94,110 @@ function GameoverScreen(props: any) {
         props.navigation.navigate('Jet');
     }
 
+    const windowDimensions = Dimensions.get('window');
+    const screenDimensions = Dimensions.get('screen');
+
+
+    const [dimensions, setDimensions] = useState({
+        window: windowDimensions,
+        screen: screenDimensions,
+    });
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener(
+            'change',
+            ({ window, screen }) => {
+                setDimensions({ window, screen });
+            },
+        );
+        return () => subscription?.remove();
+    });
+    const { height, width } = dimensions.window;
+
+    const styles = StyleSheet.create({
+        container: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: width,
+            height: height,
+            flexWrap: 'wrap',
+            flexDirection: 'row'
+        },
+        highScores: {
+            width: "100%"
+        },
+        label: {
+            fontWeight: 'bold'
+        },
+        finalCash: {
+            flexDirection: 'row'
+        },
+        scoresTitle: {
+            fontSize: 28,
+            textAlign: 'center'
+        },
+        scoreCard: {
+            width: "100%"
+        },
+        row: {
+            minHeight: 42
+        },
+        scores: {
+            width: '100%',
+            flexWrap: 'wrap',
+            flexDirection: 'row'
+        }
+    });
+
+    if (height < width && highScores.length > 0) {
+        styles.highScores.width = "50%";
+        styles.scoreCard.width = "50%";
+    }
+
     return (
         <Provider>
             <View style={styles.container}>
-                {highScores.length > 0 && (<View style={styles.highScores}>
-                    <Text style={styles.scoresTitle}>High Scores</Text>
-                    <DataTable>
-                        <DataTable.Header>
-                            <DataTable.Title>Name</DataTable.Title>
-                            <DataTable.Title>Score</DataTable.Title>
-                        </DataTable.Header>
-                        <FlatList data={highScores} renderItem={({ item }) => {
-                            return (
-                                <DataTable.Row>
-                                    <DataTable.Cell>
-                                        {item.name}
-                                    </DataTable.Cell>
-                                    <DataTable.Cell>
-                                        ${item.cash}
-                                    </DataTable.Cell>
-                                </DataTable.Row>
-                            )
-                        }}
-                        />
-                    </DataTable>
-                </View>)}
-                <Card>
-                    <Card.Content>
-                        <View style={styles.finalCash}>
-                            <Text style={styles.label}>Final cash: </Text>
-                            <Text>${finalCash}</Text>
-                        </View>
-                        <Text>{'\n'}{status}</Text>
-                    </Card.Content>
-                    <Card.Actions>
-                        <Button onPress={clearScoresDialog}>
-                            Clear High Scores
-                        </Button>
-                        <Button onPress={startNewGame}>
-                            Play Again
-                        </Button>
-                    </Card.Actions>
-                </Card>
+                <View style={styles.scores}>
+                    {highScores.length > 0 && (<View style={styles.highScores}>
+                        <Text style={styles.scoresTitle}>High Scores</Text>
+                        <DataTable>
+                            <DataTable.Header style={styles.row}>
+                                <DataTable.Title>Name</DataTable.Title>
+                                <DataTable.Title>Score</DataTable.Title>
+                            </DataTable.Header>
+                            <FlatList data={highScores} renderItem={({ item }) => {
+                                return (
+                                    <DataTable.Row style={styles.row}>
+                                        <DataTable.Cell>
+                                            {item.name}
+                                        </DataTable.Cell>
+                                        <DataTable.Cell>
+                                            ${item.cash}
+                                        </DataTable.Cell>
+                                    </DataTable.Row>
+                                )
+                            }}
+                            />
+                        </DataTable>
+                    </View>)}
+                    <Card style={styles.scoreCard}>
+                        <Card.Content>
+                            <View style={styles.finalCash}>
+                                <Text style={styles.label}>Final cash: </Text>
+                                <Text>${finalCash}</Text>
+                            </View>
+                            <Text>{'\n'}{status}</Text>
+                        </Card.Content>
+                        <Card.Actions>
+                            <Button onPress={clearScoresDialog}>
+                                Clear High Scores
+                            </Button>
+                            <Button onPress={startNewGame}>
+                                Play Again
+                            </Button>
+                        </Card.Actions>
+                    </Card>
+                </View>
 
                 <Dialog
                     visible={newScoreVisible}
@@ -180,25 +242,6 @@ function GameoverScreen(props: any) {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    highScores: {
-        width: "100%"
-    },
-    label: {
-        fontWeight: 'bold'
-    },
-    finalCash: {
-        flexDirection: 'row'
-    },
-    scoresTitle: {
-        fontSize: 28,
-        textAlign: 'center'
-    }
-});
+
 
 export default GameoverScreen

@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, FlatList, SafeAreaView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, FlatList, SafeAreaView, Dimensions, AppState } from 'react-native';
 import { TextInput, Button, Dialog, Portal, Provider, Text, TouchableRipple, Card, HelperText, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { City, Drug, EventTypes } from '../Enums';
@@ -7,6 +7,7 @@ import { RootState, DrugForSale } from '../Interfaces';
 import { borrowMoney, buyDrug, caughtByPolice, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, upgradeBag, withdrawMoney } from '../actions/DopeActions';
 import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
 import { getRandom } from '../Helpers';
+import { CardStyleInterpolators } from '@react-navigation/stack';
 
 const ITEM_HEIGHT = 48;
 
@@ -18,6 +19,7 @@ function CityScreen(props: any) {
   const dispatch = useDispatch();
 
   const theme = useTheme();
+
 
   const numre = /^[0-9\b]+$/;
 
@@ -160,12 +162,32 @@ function CityScreen(props: any) {
     }
   }, []);
 
+  const windowDimensions = Dimensions.get('window');
+  const screenDimensions = Dimensions.get('screen');
+
+
+  const [dimensions, setDimensions] = useState({
+    window: windowDimensions,
+    screen: screenDimensions,
+  });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener(
+      'change',
+      ({ window, screen }) => {
+        setDimensions({ window, screen });
+      },
+    );
+    return () => subscription?.remove();
+  });
+  const { height, width } = dimensions.window;
+
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      width: '100%'
+      width: width,
+      height: height
     },
     table: {
       justifyContent: 'center',
@@ -181,7 +203,7 @@ function CityScreen(props: any) {
     },
     header: {
       flexDirection: 'row',
-      height: 48,
+      minHeight: 48,
       paddingHorizontal: 16,
       borderBottomWidth: StyleSheet.hairlineWidth * 2,
       borderColor: theme.colors.onBackground,
@@ -194,12 +216,24 @@ function CityScreen(props: any) {
     cellText: {
     },
     location: {
-      width: '100%'
+      width: '100%',
+      flexWrap: 'wrap'
     },
     error: {
       color: 'darkred'
-    }
+    },
+    stats: {
+      width: '100%',
+    },
   });
+
+
+  if (height < width) {
+    styles.table.width = "50%";
+    styles.stats.width = "50%";
+    styles.row.minHeight = 30;
+    styles.header.minHeight = 30;
+  }
 
   return (
     <Provider>
@@ -252,7 +286,7 @@ function CityScreen(props: any) {
             />
 
           </View>
-          <Card>
+          <Card style={styles.stats}>
             <Card.Content>
               <Text>Cash on Hand: {dopeState.cash}</Text>
               <Text>Cash in Bank: {dopeState.bank}</Text>

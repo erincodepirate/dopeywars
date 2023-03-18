@@ -6,15 +6,16 @@ function IntroScreen(props: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>DopeyWars</Text>
-      <Text>{"\n"}by Erin Clark{"\n\n"}</Text>
+      <Text style={styles.author}>by Erin Clark</Text>
       <Image
         style={styles.raccoon}
         source={require("../../images/raccdealer.png")}
       />
-      <Text style={styles.credits}>Inspired by DopeWars for Palm</Text>
-      <Text style={styles.credits}>by Matthew Lee and Michael Hallet</Text>
-      <Text style={styles.credits}>As well as the original Drug Wars by John E. Dell</Text>
-      <Text>{"\n\n"}</Text>
+      <View style={styles.creditsView}>
+        <Text style={styles.credits}>Inspired by DopeWars for Palm</Text>
+        <Text style={styles.credits}>by Matthew Lee and Michael Hallet</Text>
+        <Text style={styles.credits}>As well as the original Drug Wars by John E. Dell</Text>
+      </View>
       <Button
         onPress={() => {
           props.navigation.navigate('Jet');
@@ -44,6 +45,14 @@ const styles = StyleSheet.create({
   },
   credits: {
     textAlign: 'center'
+  },
+  author: {
+    paddingTop: 10,
+    paddingBottom: 20
+  },
+  creditsView: {
+    paddingTop: 20,
+    paddingBottom: 20
   }
 });
 
