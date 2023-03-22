@@ -7,7 +7,7 @@ React-Native clone of dopewars
 
 Inspired by DopeWars for Palm
 by Matthew Lee and Michael Hallet
-As well as the original Drug Wars by John E. Dell
+as well as the original Drug Wars by John E. Dell
 
 To build this game:
 
