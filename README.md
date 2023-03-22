@@ -18,6 +18,6 @@ To build this game:
 5. press a for Android
 
 Requirements to build:
-NodeJS version 18 or later
-React Native CLI version 10.2
-Android Studio
+- NodeJS version 18 or later
+- React Native CLI version 10.2
+- Android Studio
