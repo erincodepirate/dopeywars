@@ -11,7 +11,6 @@ function JetScreen(props: any) {
   const currentCity = useSelector((state: RootState) => state.cityState.currentCity)
 
   function goToCity(place: City) {
-    // only load the new city if we are moving to a different city
     props.navigation.navigate('City', { place: place });
   }
 
