@@ -1,21 +1,17 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, Divider, Menu, Text, ThemeProvider, TouchableRipple, useTheme } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import { loadCity } from '../actions/CityActions';
+import { useSelector } from 'react-redux';
 import { City } from '../Enums';
 import { RootState } from '../Interfaces';
 
 function JetScreen(props: any) {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const { cityState } = useSelector((state: RootState) => state);
 
   function goToCity(place: City) {
     // only load the new city if we are moving to a different city
-    if (cityState.currentCity != place)
-      dispatch(loadCity(place));
-    props.navigation.navigate('City');
+    props.navigation.navigate('City', { place: place });
   }
 
   return (

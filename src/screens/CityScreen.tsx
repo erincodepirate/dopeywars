@@ -5,14 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { City, Drug, EventTypes } from '../Enums';
 import { RootState, DrugForSale } from '../Interfaces';
 import { borrowMoney, buyDrug, caughtByPolice, decrementDay, depositMoney, freeDrug, payLoan, sellDrug, upgradeBag, withdrawMoney } from '../actions/DopeActions';
-import { drugBust, drugCheaper, drugExpensive, visit } from '../actions/CityActions';
+import { drugBust, drugCheaper, drugExpensive, loadCity, visit } from '../actions/CityActions';
 import { getRandom } from '../Helpers';
 import { CardStyleInterpolators } from '@react-navigation/stack';
 
 const ITEM_HEIGHT = 48;
 
 function CityScreen(props: any) {
-  const { navigation } = props;
+  const { route, navigation } = props;
+  const { place } = route.params;
 
   const { cityState, dopeState } = useSelector((state: RootState) => state);
 
@@ -147,9 +148,9 @@ function CityScreen(props: any) {
   }
 
   useEffect(() => {
-    if (!cityState.hasVisited) {
+    if (place != cityState.currentCity) {
       dispatch(decrementDay());
-      dispatch(visit());
+      dispatch(loadCity(place));
       if (cityState.newBagForSale) {
         bagDialog();
       }
@@ -191,7 +192,7 @@ function CityScreen(props: any) {
     },
     table: {
       justifyContent: 'center',
-      width: '100%',
+      width:'100%',
     },
     row: {
       borderStyle: 'solid',
