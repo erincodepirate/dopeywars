@@ -7,7 +7,8 @@ import { RootState } from '../Interfaces';
 
 function JetScreen(props: any) {
   const theme = useTheme();
-  const { cityState } = useSelector((state: RootState) => state);
+  //const { cityState } = useSelector((state: RootState) => state);
+  const currentCity = useSelector((state: RootState) => state.cityState.currentCity)
 
   function goToCity(place: City) {
     // only load the new city if we are moving to a different city
@@ -31,11 +32,11 @@ function JetScreen(props: any) {
       }
       <View style={styles.cityStatus}>
         {
-          cityState.currentCity &&
+          currentCity &&
           <Card>
             <Card.Content>
               <Text>
-                Current location: {cityState.currentCity}
+                Current location: {currentCity}
               </Text>
             </Card.Content>
           </Card>

@@ -15,7 +15,20 @@ function CityScreen(props: any) {
   const { route, navigation } = props;
   const { place } = route.params;
 
-  const { cityState, dopeState } = useSelector((state: RootState) => state);
+  const currentCity = useSelector((state: RootState) => state.cityState.currentCity);
+  const events = useSelector((state: RootState) => state.cityState.events);
+  const newBagForSale = useSelector((state: RootState) => state.cityState.newBagForSale);
+  const policeEncounter = useSelector((state: RootState) => state.cityState.policeEncounter);
+  const drugsForSale = useSelector((state: RootState) => state.cityState.drugsForSale);
+
+  const cash = useSelector((state: RootState) => state.dopeState.cash);
+  const loan = useSelector((state: RootState) => state.dopeState.loan);
+  const capacityRemaining = useSelector((state: RootState) => state.dopeState.capacityRemaining);
+  const drugs = useSelector((state: RootState) => state.dopeState.drugs);
+  const bank = useSelector((state: RootState) => state.dopeState.bank);
+  const capacityUsed = useSelector((state: RootState) => state.dopeState.capacityUsed);
+  const capacity = useSelector((state: RootState) => state.dopeState.capacity);
+  const days = useSelector((state: RootState) => state.dopeState.days);
 
   const dispatch = useDispatch();
 
@@ -73,9 +86,9 @@ function CityScreen(props: any) {
   }
 
   const howMuchCanIBuy = (price: number) => {
-    let totalAfford = Math.floor(dopeState.cash / price);
-    if (totalAfford > dopeState.capacityRemaining) {
-      return dopeState.capacityRemaining;
+    let totalAfford = Math.floor(cash / price);
+    if (totalAfford > capacityRemaining) {
+      return capacityRemaining;
     }
     return totalAfford;
   }
@@ -104,8 +117,8 @@ function CityScreen(props: any) {
     setEventVisible(true);
 
   const handleNextEvent = () => {
-    if (eventIndex < cityState.events.length) {
-      let event = cityState.events[eventIndex];
+    if (eventIndex < events.length) {
+      let event = events[eventIndex];
       switch (event.event) {
         case EventTypes.drugBust:
           dispatch(drugBust(event.drug));
@@ -148,16 +161,16 @@ function CityScreen(props: any) {
   }
 
   useEffect(() => {
-    if (place != cityState.currentCity) {
+    if (place != currentCity) {
       dispatch(decrementDay());
       dispatch(loadCity(place));
-      if (cityState.newBagForSale) {
+      if (newBagForSale) {
         bagDialog();
       }
-      if (cityState.policeEncounter) {
+      if (policeEncounter) {
         policeDialog();
       }
-      if (eventIndex < cityState.events.length) {
+      if (eventIndex < events.length) {
         handleNextEvent();
       }
     }
@@ -192,7 +205,7 @@ function CityScreen(props: any) {
     },
     table: {
       justifyContent: 'center',
-      width:'100%',
+      width: '100%',
     },
     row: {
       borderStyle: 'solid',
@@ -258,7 +271,7 @@ function CityScreen(props: any) {
                 </Text>
               </View>
             </View>
-            <FlatList data={cityState.drugsForSale} extraData={cityState} renderItem={({ item }) => {
+            <FlatList data={drugsForSale} renderItem={({ item }) => {
               return (
                 <View key={item.drug} style={styles.row}>
                   <TouchableRipple style={styles.cell} onPress={() => {
@@ -266,7 +279,7 @@ function CityScreen(props: any) {
                     sellDialog();
                   }}>
                     <Text style={styles.cellText}>{
-                      dopeState.drugs ? dopeState.drugs[item.drug] : 0
+                      drugs ? drugs[item.drug] : 0
                     }</Text>
                   </TouchableRipple>
                   <TouchableRipple style={styles.cell}>
@@ -289,14 +302,14 @@ function CityScreen(props: any) {
           </View>
           <Card style={styles.stats}>
             <Card.Content>
-              <Text>Cash on Hand: {dopeState.cash}</Text>
-              <Text>Cash in Bank: {dopeState.bank}</Text>
-              <Text>Loan owed: {dopeState.loan}</Text>
-              <Text>Bag capacity: {dopeState.capacityUsed} / {dopeState.capacity}</Text>
-              <Text>Days remaining: {dopeState.days}</Text>
+              <Text>Cash on Hand: ${cash}</Text>
+              <Text>Cash in Bank: ${bank}</Text>
+              <Text>Loan owed: ${loan}</Text>
+              <Text>Bag capacity: {capacityUsed} / {capacity}</Text>
+              <Text>Days remaining: {days}</Text>
             </Card.Content>
             <Card.Actions>
-              {cityState.currentCity == City.Bronx && (
+              {currentCity == City.Bronx && (
                 <Button
                   onPress={bankDialog}
                   mode="contained"
@@ -304,7 +317,7 @@ function CityScreen(props: any) {
                   Bank
                 </Button>
               )}
-              {cityState.currentCity == City.Bronx && (
+              {currentCity == City.Bronx && (
                 <Button
                   onPress={loanDialog}
                   mode="contained"
@@ -314,7 +327,7 @@ function CityScreen(props: any) {
               )}
               <Button
                 onPress={() => {
-                  if (dopeState.days == 0) {
+                  if (days == 0) {
                     props.navigation.navigate('Gameover');
                   } else {
                     navigation.navigate('Jet');
@@ -337,7 +350,7 @@ function CityScreen(props: any) {
             <Dialog.Title>Buy {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
               {activeDrug.price != 0 ?
-                (activeDrug.price < dopeState.cash ?
+                (activeDrug.price < cash ?
                   (<View>
                     <Text variant="bodyMedium">
                       You can buy up to {howMuchCanIBuy(activeDrug.price)} of {activeDrug.drug}. How much do you want to buy?</Text>
@@ -346,7 +359,7 @@ function CityScreen(props: any) {
                       onChangeText={(value) => {
                         if (value == '' || numre.test(value)) {
                           let val = Number(value);
-                          if (activeDrug.price * val > dopeState.cash || val > dopeState.capacityRemaining) {
+                          if (activeDrug.price * val > cash || val > capacityRemaining) {
                             setBuyError(true);
                           } else {
                             setBuyError(false);
@@ -356,7 +369,7 @@ function CityScreen(props: any) {
                       }}
                       error={buyError} />
                     <HelperText type="error" visible={buyError}>
-                      {activeDrug.price * Number(amountToBuy) > dopeState.cash ?
+                      {activeDrug.price * Number(amountToBuy) > cash ?
                         "You cannot afford that much " :
                         "You do not have room to hold that much"} {activeDrug.drug}.
                     </HelperText>
@@ -368,7 +381,7 @@ function CityScreen(props: any) {
               }
             </Dialog.Content>
             <Dialog.Actions>
-              {(activeDrug.price != 0 && activeDrug.price < dopeState.cash) &&
+              {(activeDrug.price != 0 && activeDrug.price < cash) &&
                 <>
                   <Button
                     onPress={() => {
@@ -384,7 +397,7 @@ function CityScreen(props: any) {
                 </>
               }
               <Button onPress={closeBuyDialog}>
-                {(activeDrug.price != 0 && activeDrug.price < dopeState.cash) ? "Cancel" : "Close"}
+                {(activeDrug.price != 0 && activeDrug.price < cash) ? "Cancel" : "Close"}
               </Button>
             </Dialog.Actions>
           </Dialog>
@@ -395,22 +408,22 @@ function CityScreen(props: any) {
             onDismiss={closeSellDialog}>
             <Dialog.Title>Sell {activeDrug.drug}</Dialog.Title>
             <Dialog.Content>
-              {dopeState.drugs[activeDrug.drug] > 0
+              {drugs[activeDrug.drug] > 0
                 ? activeDrug.price != 0 ?
                   (<Text variant="bodyMedium">
-                    You can sell up to {dopeState.drugs[activeDrug.drug]} {activeDrug.drug}. How much do you want to sell?
+                    You can sell up to {drugs[activeDrug.drug]} {activeDrug.drug}. How much do you want to sell?
                   </Text>)
                   :
                   (<Text variant="bodyMedium">No one is interested in buying {activeDrug.drug} here. You may dump some of your suppy.</Text>)
                 :
                 (<Text variant="bodyMedium">You do not have any {activeDrug.drug}.</Text>)
               }
-              {dopeState.drugs[activeDrug.drug] > 0 && <TextInput
+              {drugs[activeDrug.drug] > 0 && <TextInput
                 value={amountToSell}
                 onChangeText={(value) => {
                   if (value == '' || numre.test(value)) {
                     let val = Number(value);
-                    if (val > dopeState.drugs[activeDrug.drug]) {
+                    if (val > drugs[activeDrug.drug]) {
                       setSellError(true);
                     } else {
                       setSellError(false);
@@ -424,11 +437,11 @@ function CityScreen(props: any) {
               </HelperText>
             </Dialog.Content>
             <Dialog.Actions>
-              {dopeState.drugs[activeDrug.drug] > 0 &&
+              {drugs[activeDrug.drug] > 0 &&
                 <>
                   <Button
                     onPress={() => {
-                      dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: dopeState.drugs[activeDrug.drug] }));
+                      dispatch(sellDrug({ drug: activeDrug.drug, price: activeDrug.price, amount: drugs[activeDrug.drug] }));
                       closeSellDialog();
                     }}>Max Amount</Button>
                   <Button
@@ -440,7 +453,7 @@ function CityScreen(props: any) {
                 </>
               }
               <Button onPress={closeSellDialog}>
-                {dopeState.drugs[activeDrug.drug] > 0 ? "Cancel" : "Close"}
+                {drugs[activeDrug.drug] > 0 ? "Cancel" : "Close"}
               </Button>
             </Dialog.Actions>
           </Dialog>
@@ -475,9 +488,9 @@ function CityScreen(props: any) {
                     let val = Number(value);
                     if (
                       (bankState == 1 &&
-                        val > dopeState.bank) ||
+                        val > bank) ||
                       (bankState == 2 &&
-                        val > dopeState.cash)) {
+                        val > cash)) {
                       setBankError(true);
                     } else {
                       setBankError(false);
@@ -529,7 +542,7 @@ function CityScreen(props: any) {
             <Dialog.Content>
               <Text variant="bodyMedium">
                 {loanState == 0 && "You are visiting the Loan Shark, would you like to repay your debt or borrow?"}
-                {loanState == 1 && "You currently owe: $" + dopeState.loan + ". How much would you like to pay back?"}
+                {loanState == 1 && "You currently owe: $" + loan + ". How much would you like to pay back?"}
                 {loanState == 2 && "How much would you like to borrow?"}
               </Text>
               {loanState > 0 && <View><TextInput
@@ -539,10 +552,10 @@ function CityScreen(props: any) {
                     let val = Number(value);
                     if (
                       (loanState == 1 &&
-                        (val > dopeState.loan
-                          || val > dopeState.cash)) ||
+                        (val > loan
+                          || val > cash)) ||
                       (loanState == 2 &&
-                        val > dopeState.cash * 10)) {
+                        val > cash * 10)) {
                       setLoanError(true);
                     } else {
                       setLoanError(false);
@@ -552,26 +565,26 @@ function CityScreen(props: any) {
                 }}
                 error={loanError} />
                 <HelperText type="error" visible={loanError}>
-                  {loanState == 1 && Number(loanAmount) > dopeState.loan && Number(loanAmount) < dopeState.cash &&
+                  {loanState == 1 && Number(loanAmount) > loan && Number(loanAmount) < cash &&
                     "You do not owe that much."}
-                  {loanState == 1 && Number(loanAmount) > dopeState.cash &&
+                  {loanState == 1 && Number(loanAmount) > cash &&
                     "You do not have that much cash on hand."}
                   {loanState == 2 && "The loan shark will not loan you that much today."}
                 </HelperText></View>}
             </Dialog.Content>
             {loanState == 0 && (
               <Dialog.Actions>
-                <Button disabled={dopeState.loan == 0} onPress={() => setLoanState(1)}>Repay Debt</Button>
-                <Button disabled={loanBorrowed && dopeState.loan > 0} onPress={() => setLoanState(2)}>Borrow</Button>
+                <Button disabled={loan == 0} onPress={() => setLoanState(1)}>Repay Debt</Button>
+                <Button disabled={loanBorrowed && loan > 0} onPress={() => setLoanState(2)}>Borrow</Button>
                 <Button onPress={closeLoanDialog}>Done</Button>
               </Dialog.Actions>
             )}
             {loanState > 0 && (
               <Dialog.Actions>
                 {loanState == 1 && <Button
-                  disabled={dopeState.cash < dopeState.loan}
+                  disabled={cash < loan}
                   onPress={() => {
-                    dispatch(payLoan(dopeState.loan));
+                    dispatch(payLoan(loan));
                     setLoanAmount('');
                     setLoanError(false);
                     setLoanState(0);
@@ -638,7 +651,7 @@ function CityScreen(props: any) {
               <Text>A street vendor is selling a larger bag for $200, would you like to upgrade?</Text>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button disabled={dopeState.cash < 200} onPress={() => {
+              <Button disabled={cash < 200} onPress={() => {
                 dispatch(upgradeBag({ price: 200, capacity: 20 }));
                 closeBagDialog();
               }}>

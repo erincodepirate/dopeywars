@@ -16,10 +16,12 @@ enum endStatuses {
 }
 
 function GameoverScreen(props: any) {
-    const { dopeState } = useSelector((state: RootState) => state);
+    const cash = useSelector((state: RootState) => state.dopeState.cash);
+    const loan = useSelector((state: RootState) => state.dopeState.loan);
+    const bank = useSelector((state: RootState) => state.dopeState.bank);
     const dispatch = useDispatch();
 
-    const finalCash = dopeState.cash + dopeState.bank - dopeState.loan;
+    const finalCash = cash + bank - loan;
     let status = endStatuses.in_debt;
     if (finalCash > 0) {
         status = endStatuses.poor
