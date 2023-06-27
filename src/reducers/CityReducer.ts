@@ -1,5 +1,5 @@
 import { City, Drug, Weapon, EventTypes } from '../Enums';
-import { drugBust, drugCheaper, drugExpensive, loadCity, visit } from '../actions/CityActions';
+import { drugBust, drugCheaper, drugExpensive, loadCity } from '../actions/CityActions';
 import { DrugMap, DrugForSale, LocationEvent } from '../Interfaces';
 import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
@@ -9,7 +9,6 @@ export interface CityState {
     drugsForSale: DrugForSale[],
     weaponAvailable: Weapon,
     currentCity: City | null,
-    hasVisited: boolean,
     policeEncounter: boolean,
     newBagForSale: boolean,
     events: LocationEvent[]
@@ -31,7 +30,6 @@ const INITIAL_STATE: CityState =
     drugsForSale: [],
     weaponAvailable: Weapon.Hands,
     currentCity: null,
-    hasVisited: false,
     policeEncounter: false,
     newBagForSale: false,
     events: []
@@ -145,12 +143,6 @@ export const cityReducer = createReducer(
                 s.newBagForSale = newBagForSale;
                 s.events = newEvents;
                 s.drugsForSale = newDrugsForSale;
-                s.hasVisited = false;
-                return s;
-            })
-            .addCase(visit, (state, action) => {
-                let s = _.cloneDeep(state);
-                s.hasVisited = true;
                 return s;
             })
             .addCase(drugBust, (state, action) => {
