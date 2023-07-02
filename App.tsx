@@ -76,10 +76,19 @@ export default function App() {
           <Stack.Screen
             name="City"
             component={CityScreen}
-            options={{
-              headerTitle: (props) => <LogoTitle {...props} title={Store.getState().cityState.currentCity} />,
-              headerLeft: () => <></>
-            }}
+            options={({ route }) => {
+              let place = '';
+              if (route.params != undefined && 'place' in route.params) {
+                place = String(route.params.place);
+              }
+              return (
+                {
+                  headerTitle: (props) => <LogoTitle {...props} title=
+                    {place} />,
+                  headerLeft: () => <></>
+                })
+            }
+            }
           />
           <Stack.Screen
             name="Gameover"
