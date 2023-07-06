@@ -53,7 +53,7 @@ export default function CustomNavigationBar(props: any) {
             showAboutDialog();
             closeMenu();
           }}
-          title="About Dopeywars" />
+          title="About DopeyWars" />
       </Menu>
     </Appbar.Header>
   );
