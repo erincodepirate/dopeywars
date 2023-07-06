@@ -6,3 +6,4 @@ export const loadCity = createAction<City>('LOAD_CITY');
 export const drugCheaper = createAction<DrugForSale>('DRUG_CHEAPER');
 export const drugExpensive = createAction<DrugForSale>('DRUG_EXPENSIVE');
 export const drugBust = createAction<DrugForSale>('DRUG_BUST');
+export const newGameCity = createAction('NEW_GAME');

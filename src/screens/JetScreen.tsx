@@ -7,7 +7,6 @@ import { RootState } from '../Interfaces';
 
 function JetScreen(props: any) {
   const theme = useTheme();
-  //const { cityState } = useSelector((state: RootState) => state);
   const currentCity = useSelector((state: RootState) => state.cityState.currentCity)
 
   function goToCity(place: City) {

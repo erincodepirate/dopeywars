@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import { newGame } from '../actions/DopeActions';
 import { HighScore, RootState } from '../Interfaces';
+import { newGameCity } from '../actions/CityActions';
 
 enum endStatuses {
     in_debt = "The loan shark took everything from you.",
@@ -93,6 +94,7 @@ function GameoverScreen(props: any) {
 
     const startNewGame = () => {
         dispatch(newGame());
+        dispatch(newGameCity());
         props.navigation.navigate('Jet');
     }
 
@@ -191,9 +193,11 @@ function GameoverScreen(props: any) {
                             <Text>{'\n'}{status}</Text>
                         </Card.Content>
                         <Card.Actions>
-                            <Button onPress={clearScoresDialog}>
-                                Clear High Scores
-                            </Button>
+                            {highScores.length > 0 &&
+                                <Button onPress={clearScoresDialog}>
+                                    Clear High Scores
+                                </Button>
+                            }
                             <Button onPress={startNewGame}>
                                 Play Again
                             </Button>

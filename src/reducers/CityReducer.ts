@@ -1,5 +1,5 @@
 import { City, Drug, Weapon, EventTypes } from '../Enums';
-import { drugBust, drugCheaper, drugExpensive, loadCity } from '../actions/CityActions';
+import { drugBust, drugCheaper, drugExpensive, loadCity, newGameCity } from '../actions/CityActions';
 import { DrugMap, DrugForSale, LocationEvent } from '../Interfaces';
 import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
@@ -166,6 +166,10 @@ export const cityReducer = createReducer(
                 let drug = action.payload;
                 let i = findDrug(drug.drug, s);
                 s.drugsForSale[i].price = raiseDrugPrice(drug.price, 2);
+                return s;
+            })
+            .addCase(newGameCity, (state, action) => {
+                var s = _.cloneDeep(INITIAL_STATE);
                 return s;
             })
     }
