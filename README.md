@@ -17,7 +17,7 @@ To build this game:
 4. npm start
 5. press a for Android
    
-to build the Android APK: 
+To build the Android APK: 
 1. npm run build:android
 
 Requirements to build:
